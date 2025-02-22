@@ -300,22 +300,45 @@ const fallbackCopyTextToClipboard = (text) => {
             <tr key={item.id} className="border-b border-gray-700 hover:bg-gray-700 transition">
               <td className="py-3 px-4">{item.exercise}</td>
               <td className="py-3 px-4 text-center">{item.set}</td>
-              <td className="py-3 px-4 text-center">{item.reps}</td>
-              <td className="py-3 px-4 text-center">{item.weight} kg</td>
-              <td className="py-3 px-4 text-center">{item.volume} kg</td>
+
+              {/* Redigerbar Reps */}
               <td className="py-3 px-4 text-center">
-                <a
-                  href={`https://www.youtube.com/results?search_query=how+to+${encodeURIComponent(item.exercise)}`}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="flex items-center justify-center gap-2 text-blue-400 hover:text-blue-600 transition"
-                >
-                  <img src="https://upload.wikimedia.org/wikipedia/commons/b/b8/YouTube_Logo_2017.svg" 
-                       alt="YouTube" 
-                       className="w-6 h-6" />
-                  <span className="hidden sm:inline">Se Video</span>
-                </a>
+                <input
+                  type="number"
+                  className="w-16 text-center bg-gray-700 text-white border border-gray-500 rounded-md focus:ring-2 focus:ring-blue-400"
+                  value={item.reps}
+                  onChange={(e) => updateWorkout(item.id, "reps", e.target.value)}
+                />
               </td>
+
+              {/* Redigerbar Vægt */}
+              <td className="py-3 px-4 text-center">
+                <input
+                  type="number"
+                  className="w-16 text-center bg-gray-700 text-white border border-gray-500 rounded-md focus:ring-2 focus:ring-blue-400"
+                  value={item.weight}
+                  onChange={(e) => updateWorkout(item.id, "weight", e.target.value)}
+                /> kg
+              </td>
+
+              <td className="py-3 px-4 text-center">{item.volume} kg</td>
+
+              {/* YouTube-link med større ikon */}
+              <td className="py-3 px-4 text-center">
+  <a
+    href={`https://www.youtube.com/results?search_query=how+to+${encodeURIComponent(item.exercise)}`}
+    target="_blank"
+    rel="noopener noreferrer"
+    className="flex items-center justify-center gap-2 text-red-500 hover:text-red-700 transition"
+  >
+    <svg className="w-8 h-8 fill-current" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512">
+      <path d="M549.7 124.1c-6.3-23.5-24.8-42-48.3-48.3C457.6 64 288 64 288 64s-169.6 0-213.4 11.8c-23.5 6.3-42 24.8-48.3 48.3C16 167.9 16 256 16 256s0 88.1 10.3 131.9c6.3 23.5 24.8 42 48.3 48.3C118.4 448 288 448 288 448s169.6 0 213.4-11.8c23.5-6.3 42-24.8 48.3-48.3C560 344.1 560 256 560 256s0-88.1-10.3-131.9zM232 336V176l144 80-144 80z"/>
+    </svg>
+    <span className="hidden sm:inline">Se Video</span>
+  </a>
+</td>
+
+              {/* Slut Sæt-knap */}
               <td className="py-3 px-4 text-center">
                 <button
                   onClick={() => completeSet(item.id)}
@@ -331,6 +354,7 @@ const fallbackCopyTextToClipboard = (text) => {
     </div>
   </div>
 )}
+
 
 
 
