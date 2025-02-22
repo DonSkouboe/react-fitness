@@ -150,30 +150,38 @@ export default function App() {
   };
   
   
+  const [generatedPrompt, setGeneratedPrompt] = useState("");
+
   const handlePromptCopy = (type) => {
-    if (type && prompts[type]) {
-        let textToCopy = `Jeg vil gerne have en træningsplan baseret på følgende detaljer:\n\n${prompts[type]}`;
-
-        // Tilføj mulighed for at spørge ind til træningsvarighed og præferencer
-        textToCopy += "\n\nSpørg mig om:\n";
-        textToCopy += "- Hvor lang tid træningen må vare 🕒\n";
-        textToCopy += "- Hvilke øvelser jeg foretrækker 💪\n";
-        textToCopy += "- Øvelser jeg gerne vil undgå 🚫";
-
-        // Kopiér til clipboard hvis muligt
-        if (navigator.clipboard && window.isSecureContext) {
-            navigator.clipboard.writeText(textToCopy)
-                .then(() => alert(`✅ ${type} ChatGPT prompt kopieret! Indsæt den i ChatGPT.`))
-                .catch(() => fallbackCopyTextToClipboard(textToCopy));
-        } else {
-            fallbackCopyTextToClipboard(textToCopy);
-        }
-
-        // Åbn ChatGPT med prompt
-        const chatGPTLink = `https://chat.openai.com/?model=gpt-4&prompt=${encodeURIComponent(textToCopy)}`;
-        window.open(chatGPTLink, "_blank");
-    }
-};
+      if (type && prompts[type]) {
+          let textToCopy = `LAV en detaljeret træningsplan baseret på følgende:\n\n${prompts[type]}`;
+  
+          textToCopy += `
+          
+          **RETNINGSLINJER TIL DIT SVAR:**  
+          - Brug formatet:  
+            - Øvelse Sæt x Reps @ Vægt  
+            - Eksempel: Squat 4x10 @ 90kg  
+          - Hvis vægt ikke er relevant, skriv "kropsvægt".  
+          - Hold besvarelsen **kort og præcis**, ingen ekstra forklaringer.  
+          - Brug **5-7 øvelser pr. program** for en effektiv træning.  
+          - Afslut med en tom linje, så brugeren nemt kan kopiere programmet.`;
+  
+          setGeneratedPrompt(textToCopy); // Sætter teksten i en kopierbar boks
+      }
+  };
+  
+  // Funktion til at kopiere prompten
+  const copyPromptToClipboard = () => {
+      if (navigator.clipboard && window.isSecureContext) {
+          navigator.clipboard.writeText(generatedPrompt)
+              .then(() => alert("✅ Prompt kopieret! Indsæt den i ChatGPT."))
+              .catch(() => fallbackCopyTextToClipboard(generatedPrompt));
+      } else {
+          fallbackCopyTextToClipboard(generatedPrompt);
+      }
+  };
+  
 
 
 // 📌 Fallback-metode til ældre browsere og iOS-enheder
@@ -205,6 +213,26 @@ const fallbackCopyTextToClipboard = (text) => {
     <option value="Styrketræning">⚡ Styrketræning (Powerlifting)</option>
   </select>
 </div>
+
+{generatedPrompt && (
+  <div className="w-full max-w-lg mt-4 p-4 bg-gray-800 border border-gray-700 rounded-lg">
+    <label className="block text-white font-semibold mb-2">
+      📋 Kopier denne prompt og brug den i ChatGPT:
+    </label>
+    <textarea
+      className="w-full bg-gray-700 text-white p-2 rounded-md"
+      rows="6"
+      value={generatedPrompt}
+      readOnly
+    />
+    <button
+      onClick={copyPromptToClipboard}
+      className="mt-2 px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition"
+    >
+      📋 Kopier Prompt
+    </button>
+  </div>
+)}
 
       <textarea
         className="w-full max-w-lg p-4 border-2 border-gray-700 bg-gray-800 text-white rounded-lg shadow-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
