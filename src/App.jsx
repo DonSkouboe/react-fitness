@@ -278,13 +278,12 @@ const fallbackCopyTextToClipboard = (text) => {
         📋 Formatér Træning
       </button>
 
-      {/* TABELLEN - VISER AKTIVE SÆT */}
-{/* TABELLEN - VISER AKTIVE SÆT */}
+ {/* TABELLEN - VISER AKTIVE SÆT */}
 {workout.length > 0 && (
-  <div className="w-full max-w-3xl mt-6 overflow-x-auto">
+  <div className="w-full max-w-3xl mt-6">
     <h2 className="text-xl font-bold text-blue-300 mb-2">Aktiv Træning</h2>
     <div className="overflow-x-auto rounded-lg border border-gray-700">
-      <table className="w-full min-w-[600px] bg-gray-800 text-white shadow-lg">
+      <table className="w-full min-w-[750px] bg-gray-800 text-white shadow-lg">
         <thead className="bg-blue-600 text-white">
           <tr>
             <th className="py-3 px-4 text-left">Øvelse</th>
@@ -309,9 +308,12 @@ const fallbackCopyTextToClipboard = (text) => {
                   href={`https://www.youtube.com/results?search_query=how+to+${encodeURIComponent(item.exercise)}`}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="text-blue-400 flex items-center justify-center gap-2 hover:text-blue-600 transition"
+                  className="flex items-center justify-center gap-2 text-blue-400 hover:text-blue-600 transition"
                 >
-                  🎥 <span className="hidden sm:inline">Se Video</span>
+                  <img src="https://upload.wikimedia.org/wikipedia/commons/b/b8/YouTube_Logo_2017.svg" 
+                       alt="YouTube" 
+                       className="w-6 h-6" />
+                  <span className="hidden sm:inline">Se Video</span>
                 </a>
               </td>
               <td className="py-3 px-4 text-center">
@@ -329,6 +331,7 @@ const fallbackCopyTextToClipboard = (text) => {
     </div>
   </div>
 )}
+
 
 
 
