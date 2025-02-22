@@ -68,7 +68,8 @@ export default function App() {
     }
   };
 
-  const totalVolume = completedSets.reduce((sum, set) => sum + set.volume, 0);
+  const totalVolume = [...workout, ...completedSets].reduce((sum, set) => sum + set.volume, 0);
+
   const prompts = {
     "Full Body": `
       Lav en effektiv Full Body træningsplan. Hold det **udelukkende** i dette format, men kom selv med det komplette program som ønskes. Lav den i klar tekst så den er nem at kopiere:
@@ -303,23 +304,23 @@ const fallbackCopyTextToClipboard = (text) => {
 
               {/* Redigerbar Reps */}
               <td className="py-3 px-4 text-center">
-                <input
-                  type="number"
-                  className="w-16 text-center bg-gray-700 text-white border border-gray-500 rounded-md focus:ring-2 focus:ring-blue-400"
-                  value={item.reps}
-                  onChange={(e) => updateWorkout(item.id, "reps", e.target.value)}
-                />
-              </td>
+  <input
+    type="number"
+    className="w-16 p-1 bg-gray-700 text-white text-center rounded-md border border-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-400"
+    value={item.reps}
+    onChange={(e) => updateSet(item.id, "reps", e.target.value)}
+  />
+</td>
 
-              {/* Redigerbar Vægt */}
-              <td className="py-3 px-4 text-center">
-                <input
-                  type="number"
-                  className="w-16 text-center bg-gray-700 text-white border border-gray-500 rounded-md focus:ring-2 focus:ring-blue-400"
-                  value={item.weight}
-                  onChange={(e) => updateWorkout(item.id, "weight", e.target.value)}
-                /> kg
-              </td>
+<td className="py-3 px-4 text-center">
+  <input
+    type="number"
+    className="w-16 p-1 bg-gray-700 text-white text-center rounded-md border border-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-400"
+    value={item.weight}
+    onChange={(e) => updateSet(item.id, "weight", e.target.value)}
+  />
+</td>
+
 
               <td className="py-3 px-4 text-center">{item.volume} kg</td>
 
