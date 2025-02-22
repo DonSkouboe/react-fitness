@@ -153,23 +153,32 @@ export default function App() {
   const [generatedPrompt, setGeneratedPrompt] = useState("");
 
   const handlePromptCopy = (type) => {
-      if (type && prompts[type]) {
-          let textToCopy = `LAV en detaljeret træningsplan baseret på følgende:\n\n${prompts[type]}`;
+    if (type && prompts[type]) {
+        let textToCopy = `LAV en detaljeret træningsplan i dette **EKSAKTE FORMAT** uden bullet points eller ekstra tekst:\n\n`;
+
+        textToCopy += `${prompts[type]}\n\n`;
+
+        textToCopy += `**RETNINGSLINJER FOR DIT SVAR:**  
+- Skriv kun træningsprogrammet i **ren tekst** uden bullet points.  
+- Brug dette format præcist:
   
-          textToCopy += `
-          
-          **RETNINGSLINJER TIL DIT SVAR:**  
-          - Brug formatet:  
-            - Øvelse Sæt x Reps @ Vægt  
-            - Eksempel: Squat 4x10 @ 90kg  
-          - Hvis vægt ikke er relevant, skriv "kropsvægt".  
-          - Hold besvarelsen **kort og præcis**, ingen ekstra forklaringer.  
-          - Brug **5-7 øvelser pr. program** for en effektiv træning.  
-          - Afslut med en tom linje, så brugeren nemt kan kopiere programmet.`;
-  
-          setGeneratedPrompt(textToCopy); // Sætter teksten i en kopierbar boks
-      }
-  };
+  Squat 4x10 @ 90kg  
+  Deadlift 4x6 @ 120kg  
+  Bench Press 4x10 @ 85kg  
+  Bent-over Rows 4x10 @ 55kg  
+  Shoulder Press 3x12 @ 32kg  
+  Hanging Leg Raises 3x15 kropsvægt  
+  Plank 3x45 sekunder  
+
+- **Ingen forklaringer, ingen overskrifter, ingen ekstra mellemrum eller symboler**.  
+- Hvis vægt ikke er relevant, skriv "kropsvægt".  
+- **Brug præcis 5-7 øvelser pr. program**.  
+- Afslut med en tom linje for nem kopiering.`;  
+
+        setGeneratedPrompt(textToCopy); // Sætter teksten i en kopierbar boks
+    }
+};
+
   
   // Funktion til at kopiere prompten
   const copyPromptToClipboard = () => {
