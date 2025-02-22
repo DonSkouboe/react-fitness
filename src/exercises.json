@@ -1,0 +1,33 @@
+[
+    {
+      "name": "Bench Press",
+      "muscle": "Chest",
+      "image": "https://www.exercisedb.io/images/bench-press.jpg"
+    },
+    {
+      "name": "Squat",
+      "muscle": "Legs",
+      "image": "https://www.exercisedb.io/images/squat.jpg"
+    },
+    {
+      "name": "Deadlift",
+      "muscle": "Back",
+      "image": "https://www.exercisedb.io/images/deadlift.jpg"
+    },
+    {
+      "name": "Pull-ups",
+      "muscle": "Back",
+      "image": "https://www.exercisedb.io/images/pull-ups.jpg"
+    },
+    {
+      "name": "Dumbbell Shoulder Press",
+      "muscle": "Shoulders",
+      "image": "https://www.exercisedb.io/images/dumbbell-shoulder-press.jpg"
+    },
+    {
+      "name": "Barbell Curl",
+      "muscle": "Biceps",
+      "image": "https://www.exercisedb.io/images/barbell-curl.jpg"
+    }
+  ]
+  
