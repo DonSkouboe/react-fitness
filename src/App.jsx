@@ -140,6 +140,8 @@ export default function App() {
       })
       .catch((err) => {
         console.error("Clipboard fejlede", err);
+        // Hvis clipboard fejler, vis teksten i tekstfeltet med en instruktion
+        setInput(`❗ Kunne ikke kopiere automatisk. Kopiér denne tekst manuelt og indsæt i ChatGPT:\n\n${text}`);
       });
 };
   
