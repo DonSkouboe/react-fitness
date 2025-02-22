@@ -52,7 +52,7 @@ export default function App() {
   const totalVolume = completedSets.reduce((sum, set) => sum + set.volume, 0);
   const prompts = {
     "Full Body": `
-      Lav en effektiv Full Body træningsplan. Hold det **udelukkende** i dette format:
+      Lav en effektiv Full Body træningsplan. Hold det **udelukkende** i dette format, men kom selv med det komplette program som ønskes. Lav den i klar tekst så den er nem at kopiere:
       - Øvelse Sæt x Reps @ Vægt (kg)
       
       Eksempel:
