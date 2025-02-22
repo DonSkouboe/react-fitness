@@ -52,66 +52,103 @@ export default function App() {
   const totalVolume = completedSets.reduce((sum, set) => sum + set.volume, 0);
   const prompts = {
     "Full Body": `
-      Lav en effektiv Full Body træningsplan:
-      - Øvelse Sæt x Reps @ Vægt
-      - Eksempel: 
-        - Squat 4x8 @ 90kg
-        - Bent-over Rows 4x10 @ 50kg
-        - Shoulder Press 3x12 @ 30kg
-        - Romanian Deadlifts 3x12 @ 60kg
-        - Plank 3x30 sekunder
+      Lav en effektiv Full Body træningsplan. Hold det **udelukkende** i dette format:
+      - Øvelse Sæt x Reps @ Vægt (kg)
+      
+      Eksempel:
+      - Squat 4x8 @ 90kg
+      - Bent-over Rows 4x10 @ 50kg
+      - Shoulder Press 3x12 @ 30kg
+      - Romanian Deadlifts 3x12 @ 60kg
+      - Plank 3x30 sekunder
+      
+      **⚠️ VIGTIGT:**
+      - INGEN ekstra forklaringer eller emojis.
+      - INGEN punktopstillinger eller nummerering.
+      - KUN i dette format.
     `,
     "Push": `
-      Lav en træningsplan til Push (Bryst, Skulder, Triceps):
-      - Øvelse Sæt x Reps @ Vægt
-      - Eksempel:
-        - Bench Press 4x10 @ 80kg
-        - Shoulder Press 3x12 @ 25kg
-        - Dips 3x12 kropsvægt
-        - Incline Dumbbell Press 3x10 @ 30kg
-        - Triceps Pushdown 3x12 @ 40kg
+      Lav en træningsplan til Push (Bryst, Skulder, Triceps). Hold formatet **præcis** som vist her:
+      - Øvelse Sæt x Reps @ Vægt (kg)
+  
+      Eksempel:
+      - Bench Press 4x10 @ 80kg
+      - Shoulder Press 3x12 @ 25kg
+      - Dips 3x12 kropsvægt
+      - Incline Dumbbell Press 3x10 @ 30kg
+      - Triceps Pushdown 3x12 @ 40kg
+  
+      **⚠️ VIGTIGT:**
+      - INGEN ekstra forklaringer eller emojis.
+      - INGEN punktopstillinger eller nummerering.
+      - KUN i dette format.
     `,
     "Pull": `
-      Lav en træningsplan til Pull (Ryg, Biceps):
-      - Øvelse Sæt x Reps @ Vægt
-      - Eksempel:
-        - Deadlifts 4x6 @ 140kg
-        - Pull-ups 3x12
-        - Barbell Rows 3x10 @ 70kg
-        - Lat Pulldown 3x12 @ 50kg
-        - Bicep Curls 3x10 @ 20kg
+      Lav en træningsplan til Pull (Ryg, Biceps). **Brug KUN følgende format**:
+      - Øvelse Sæt x Reps @ Vægt (kg)
+  
+      Eksempel:
+      - Deadlifts 4x6 @ 140kg
+      - Pull-ups 3x12
+      - Barbell Rows 3x10 @ 70kg
+      - Lat Pulldown 3x12 @ 50kg
+      - Bicep Curls 3x10 @ 20kg
+  
+      **⚠️ VIGTIGT:**
+      - INGEN ekstra forklaringer eller emojis.
+      - INGEN punktopstillinger eller nummerering.
+      - KUN i dette format.
     `,
     "Legs": `
-      Lav en intens ben-træningsplan:
-      - Øvelse Sæt x Reps @ Vægt
-      - Eksempel:
-        - Squat 5x5 @ 120kg
-        - Bulgarian Split Squat 3x10 @ 20kg håndvægte
-        - Romanian Deadlift 4x10 @ 80kg
-        - Leg Press 4x12 @ 180kg
-        - Calf Raises 4x20 @ 50kg
+      Lav en intens ben-træningsplan i **præcis** dette format:
+      - Øvelse Sæt x Reps @ Vægt (kg)
+  
+      Eksempel:
+      - Squat 5x5 @ 120kg
+      - Bulgarian Split Squat 3x10 @ 20kg håndvægte
+      - Romanian Deadlift 4x10 @ 80kg
+      - Leg Press 4x12 @ 180kg
+      - Calf Raises 4x20 @ 50kg
+  
+      **⚠️ VIGTIGT:**
+      - INGEN ekstra forklaringer eller emojis.
+      - INGEN punktopstillinger eller nummerering.
+      - KUN i dette format.
     `,
     "Hypertrofi": `
-      Lav en træningsplan til hypertrofi (muskelopbygning):
-      - Øvelse Sæt x Reps @ Vægt
-      - Eksempel:
-        - Bench Press 4x12/10/8/6 @ 75/80/85/90kg
-        - Lat Pulldown 4x12/10/8/6 @ 50/55/60/65kg
-        - Bulgarian Split Squat 3x10 @ 20kg håndvægte
-        - Face Pulls 3x15 @ 30kg
-        - Hammer Curls 3x12 @ 15kg
+      Lav en træningsplan til hypertrofi (muskelopbygning). Brug **KUN** dette format:
+      - Øvelse Sæt x Reps @ Vægt (kg)
+  
+      Eksempel:
+      - Bench Press 4x12/10/8/6 @ 75/80/85/90kg
+      - Lat Pulldown 4x12/10/8/6 @ 50/55/60/65kg
+      - Bulgarian Split Squat 3x10 @ 20kg håndvægte
+      - Face Pulls 3x15 @ 30kg
+      - Hammer Curls 3x12 @ 15kg
+  
+      **⚠️ VIGTIGT:**
+      - INGEN ekstra forklaringer eller emojis.
+      - INGEN punktopstillinger eller nummerering.
+      - KUN i dette format.
     `,
     "Styrketræning": `
-      Lav en træningsplan til styrketræning (powerlifting):
-      - Øvelse Sæt x Reps @ Vægt
-      - Eksempel:
-        - Squat 5x5 @ 150kg
-        - Bench Press 5x5 @ 100kg
-        - Deadlift 5x5 @ 180kg
-        - Overhead Press 3x5 @ 60kg
-        - Barbell Row 3x6 @ 80kg
+      Lav en træningsplan til styrketræning (powerlifting). **Format SKAL være præcist som vist**:
+      - Øvelse Sæt x Reps @ Vægt (kg)
+  
+      Eksempel:
+      - Squat 5x5 @ 150kg
+      - Bench Press 5x5 @ 100kg
+      - Deadlift 5x5 @ 180kg
+      - Overhead Press 3x5 @ 60kg
+      - Barbell Row 3x6 @ 80kg
+  
+      **⚠️ VIGTIGT:**
+      - INGEN ekstra forklaringer eller emojis.
+      - INGEN punktopstillinger eller nummerering.
+      - KUN i dette format.
     `
   };
+  
   
   const handlePromptCopy = (type) => {
     if (type && prompts[type]) {
