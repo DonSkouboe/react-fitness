@@ -115,10 +115,40 @@ export default function App() {
   
   const handlePromptCopy = (type) => {
     if (type && prompts[type]) {
-      navigator.clipboard.writeText(prompts[type]);
-      alert(`✅ ${type} ChatGPT prompt kopieret! Indsæt den i ChatGPT.`);
+      const textToCopy = prompts[type];
+  
+      // Forsøg at bruge `navigator.clipboard.writeText`
+      if (navigator.clipboard && window.isSecureContext) {
+        navigator.clipboard.writeText(textToCopy).then(() => {
+          alert(`✅ ${type} ChatGPT prompt kopieret! Indsæt den i ChatGPT.`);
+        }).catch((err) => {
+          console.error("Clipboard fejlede, bruger fallback", err);
+          fallbackCopyTextToClipboard(textToCopy, type);
+        });
+      } else {
+        // Hvis clipboard API ikke virker, brug fallback
+        fallbackCopyTextToClipboard(textToCopy, type);
+      }
     }
   };
+  
+  // 📌 Fallback-metode til iPhone (brug `textarea` hack)
+  const fallbackCopyTextToClipboard = (text, type) => {
+    const textArea = document.createElement("textarea");
+    textArea.value = text;
+    textArea.style.position = "fixed";  // Sørger for, at den ikke scroller siden
+    textArea.style.opacity = 0;         // Gør den usynlig
+    document.body.appendChild(textArea);
+    textArea.select();
+    try {
+      document.execCommand("copy");
+      alert(`✅ ${type} ChatGPT prompt kopieret! Indsæt den i ChatGPT.`);
+    } catch (err) {
+      console.error("Fallback clipboard fejlede", err);
+    }
+    document.body.removeChild(textArea);
+  };
+  
   return (
     <div className="min-h-screen flex flex-col items-center justify-center bg-gray-900 text-white p-6">
       <h1 className="text-4xl font-bold text-blue-400 mb-6">🏋️ Fit-with-ChatGPT 🚀</h1>
