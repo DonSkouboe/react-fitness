@@ -61,21 +61,35 @@ export default function App() {
         - Romanian Deadlifts 3x12 @ 60kg
         - Plank 3x30 sekunder
     `,
-    "Push/Pull/Legs": `
-      Lav en struktureret Push/Pull/Legs split træningsplan:
+    "Push": `
+      Lav en træningsplan til Push (Bryst, Skulder, Triceps):
       - Øvelse Sæt x Reps @ Vægt
-      - Push dag:
+      - Eksempel:
         - Bench Press 4x10 @ 80kg
         - Shoulder Press 3x12 @ 25kg
         - Dips 3x12 kropsvægt
-      - Pull dag:
+        - Incline Dumbbell Press 3x10 @ 30kg
+        - Triceps Pushdown 3x12 @ 40kg
+    `,
+    "Pull": `
+      Lav en træningsplan til Pull (Ryg, Biceps):
+      - Øvelse Sæt x Reps @ Vægt
+      - Eksempel:
         - Deadlifts 4x6 @ 140kg
         - Pull-ups 3x12
+        - Barbell Rows 3x10 @ 70kg
+        - Lat Pulldown 3x12 @ 50kg
         - Bicep Curls 3x10 @ 20kg
-      - Legs dag:
-        - Squat 4x8 @ 100kg
-        - Leg Press 4x12 @ 150kg
-        - Calf Raises 4x15 @ 40kg
+    `,
+    "Legs": `
+      Lav en intens ben-træningsplan:
+      - Øvelse Sæt x Reps @ Vægt
+      - Eksempel:
+        - Squat 5x5 @ 120kg
+        - Bulgarian Split Squat 3x10 @ 20kg håndvægte
+        - Romanian Deadlift 4x10 @ 80kg
+        - Leg Press 4x12 @ 180kg
+        - Calf Raises 4x20 @ 50kg
     `,
     "Hypertrofi": `
       Lav en træningsplan til hypertrofi (muskelopbygning):
@@ -110,6 +124,7 @@ export default function App() {
       <h1 className="text-4xl font-bold text-blue-400 mb-6">🏋️ Fit-with-ChatGPT 🚀</h1>
 
       {/* INPUT-FELT */}
+      
       {/* Vælg træningsstil og kopier prompt til ChatGPT */}
 <div className="mb-4 w-full max-w-lg">
   <label className="block text-white font-semibold mb-2">Vælg din træningsstil:</label>
@@ -119,8 +134,10 @@ export default function App() {
   >
     <option value="">-- Vælg --</option>
     <option value="Full Body">💪 Full Body</option>
-    <option value="Push/Pull/Legs">🏋️ Push/Pull/Legs Split</option>
-    <option value="Hypertrofi">🔥 Hypertrofi (Muskelopbygning)</option>
+    <option value="Push">🔥 Push (Bryst, Skulder, Triceps)</option>
+    <option value="Pull">💪 Pull (Ryg, Biceps)</option>
+    <option value="Legs">🦵 Legs (Ben-træning)</option>
+    <option value="Hypertrofi">🏋️ Hypertrofi (Muskelopbygning)</option>
     <option value="Styrketræning">⚡ Styrketræning (Powerlifting)</option>
   </select>
 </div>
