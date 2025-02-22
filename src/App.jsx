@@ -115,35 +115,59 @@ export default function App() {
   
   const handlePromptCopy = (type) => {
     if (type && prompts[type]) {
-      const textToCopy = prompts[type];
-  
-      // Forsøg at bruge `navigator.clipboard.writeText`
-      if (navigator.clipboard && window.isSecureContext) {
-        navigator.clipboard.writeText(textToCopy).then(() => {
-          alert(`✅ ${type} ChatGPT prompt kopieret! Indsæt den i ChatGPT.`);
-        }).catch((err) => {
-          console.error("Clipboard fejlede, bruger fallback", err);
-          fallbackCopyTextToClipboard(textToCopy, type);
-        });
-      } else {
-        // Hvis clipboard API ikke virker, brug fallback
-        fallbackCopyTextToClipboard(textToCopy, type);
-      }
+        const textToCopy = prompts[type];
+
+        if (navigator.clipboard && window.isSecureContext) {
+            // 📌 Forsøg at bruge moderne clipboard API
+            navigator.clipboard.writeText(textToCopy)
+                .then(() => {
+                    alert(`✅ ${type} ChatGPT prompt kopieret! Indsæt den i ChatGPT.`);
+                })
+                .catch(() => {
+                    fallbackCopyTextToClipboard(textToCopy, type);
+                });
+        } else {
+            // 📌 Fallback hvis clipboard API ikke er understøttet
+            fallbackCopyTextToClipboard(textToCopy, type);
+        }
     }
-  };
-  
-  // 📌 Fallback-metode til iPhone (brug `textarea` hack)
-  const fallbackCopyTextToClipboard = (text, type) => {
-    navigator.clipboard.writeText(text)
-      .then(() => {
-        alert(`✅ ${type} ChatGPT prompt kopieret! Indsæt den i ChatGPT.`);
-      })
-      .catch((err) => {
-        console.error("Clipboard fejlede", err);
-        // Hvis clipboard fejler, vis teksten i tekstfeltet med en instruktion
-        setInput(`❗ Kunne ikke kopiere automatisk. Kopiér denne tekst manuelt og indsæt i ChatGPT:\n\n${text}`);
-      });
 };
+
+// 📌 Fallback-metode til ældre browsere og iOS-enheder
+const fallbackCopyTextToClipboard = (text, type) => {
+    const textArea = document.createElement("textarea");
+    textArea.value = text;
+    document.body.appendChild(textArea);
+
+    // 📱 iOS-fallback: Marker hele teksten, så den kan kopieres manuelt
+    const isIOS = /ipad|iphone|ipod/i.test(navigator.userAgent);
+    if (isIOS) {
+        const range = document.createRange();
+        range.selectNodeContents(textArea);
+        const selection = window.getSelection();
+        selection.removeAllRanges();
+        selection.addRange(range);
+        textArea.setSelectionRange(0, 999999);
+    } else {
+        textArea.select();
+    }
+
+    try {
+        const successful = document.execCommand("copy");
+        if (successful) {
+            alert(`✅ ${type} ChatGPT prompt kopieret! Indsæt den i ChatGPT.`);
+        } else {
+            throw new Error("execCommand mislykkedes");
+        }
+    } catch (err) {
+        console.error("Clipboard fejlede", err);
+        // 📌 Hvis ALT fejler, sæt teksten i inputfeltet med instruktioner
+        setInput(`❗ Kunne ikke kopiere automatisk. Kopiér denne tekst manuelt og indsæt i ChatGPT:\n\n${text}`);
+    }
+
+    document.body.removeChild(textArea);
+};
+
   
   return (
     <div className="min-h-screen flex flex-col items-center justify-center bg-gray-900 text-white p-6">
