@@ -1,10 +1,10 @@
 import { useState } from "react";
+import exerciseData from "./exercises.json"; // Importer vores lokale dataset
 
 export default function App() {
   const [workout, setWorkout] = useState([]);
   const [completedSets, setCompletedSets] = useState([]);
   const [input, setInput] = useState("");
-  const [selectedPrompt, setSelectedPrompt] = useState("");
 
   const processWorkout = () => {
     const lines = input.split("\n").filter((line) => line.trim() !== "");
@@ -50,7 +50,6 @@ export default function App() {
   };
 
   const totalVolume = completedSets.reduce((sum, set) => sum + set.volume, 0);
-
   const prompts = {
     "Full Body": `
       Lav en effektiv Full Body træningsplan:
@@ -91,43 +90,88 @@ export default function App() {
         - Romanian Deadlift 4x10 @ 80kg
         - Leg Press 4x12 @ 180kg
         - Calf Raises 4x20 @ 50kg
+    `,
+    "Hypertrofi": `
+      Lav en træningsplan til hypertrofi (muskelopbygning):
+      - Øvelse Sæt x Reps @ Vægt
+      - Eksempel:
+        - Bench Press 4x12/10/8/6 @ 75/80/85/90kg
+        - Lat Pulldown 4x12/10/8/6 @ 50/55/60/65kg
+        - Bulgarian Split Squat 3x10 @ 20kg håndvægte
+        - Face Pulls 3x15 @ 30kg
+        - Hammer Curls 3x12 @ 15kg
+    `,
+    "Styrketræning": `
+      Lav en træningsplan til styrketræning (powerlifting):
+      - Øvelse Sæt x Reps @ Vægt
+      - Eksempel:
+        - Squat 5x5 @ 150kg
+        - Bench Press 5x5 @ 100kg
+        - Deadlift 5x5 @ 180kg
+        - Overhead Press 3x5 @ 60kg
+        - Barbell Row 3x6 @ 80kg
     `
   };
-
+  
+  const handlePromptCopy = (type) => {
+    if (type && prompts[type]) {
+      const textToCopy = prompts[type];
+  
+      // Forsøg at bruge `navigator.clipboard.writeText`
+      if (navigator.clipboard && window.isSecureContext) {
+        navigator.clipboard.writeText(textToCopy).then(() => {
+          alert(`✅ ${type} ChatGPT prompt kopieret! Indsæt den i ChatGPT.`);
+        }).catch((err) => {
+          console.error("Clipboard fejlede, bruger fallback", err);
+          fallbackCopyTextToClipboard(textToCopy, type);
+        });
+      } else {
+        // Hvis clipboard API ikke virker, brug fallback
+        fallbackCopyTextToClipboard(textToCopy, type);
+      }
+    }
+  };
+  
+  // 📌 Fallback-metode til iPhone (brug `textarea` hack)
+  const fallbackCopyTextToClipboard = (text, type) => {
+    const textArea = document.createElement("textarea");
+    textArea.value = text;
+    textArea.style.position = "fixed";  // Sørger for, at den ikke scroller siden
+    textArea.style.opacity = 0;         // Gør den usynlig
+    document.body.appendChild(textArea);
+    textArea.select();
+    try {
+      document.execCommand("copy");
+      alert(`✅ ${type} ChatGPT prompt kopieret! Indsæt den i ChatGPT.`);
+    } catch (err) {
+      console.error("Fallback clipboard fejlede", err);
+    }
+    document.body.removeChild(textArea);
+  };
+  
   return (
     <div className="min-h-screen flex flex-col items-center justify-center bg-gray-900 text-white p-6">
       <h1 className="text-4xl font-bold text-blue-400 mb-6">🏋️ Fit-with-ChatGPT 🚀</h1>
 
-      {/* Vælg træningsstil */}
-      <div className="mb-4 w-full max-w-lg">
-        <label className="block text-white font-semibold mb-2">Vælg din træningsstil:</label>
-        <select
-          onChange={(e) => setSelectedPrompt(prompts[e.target.value] || "")}
-          className="w-full px-4 py-2 bg-gray-800 text-white rounded-md border-2 border-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-400"
-        >
-          <option value="">-- Vælg --</option>
-          <option value="Full Body">💪 Full Body</option>
-          <option value="Push">🔥 Push (Bryst, Skulder, Triceps)</option>
-          <option value="Pull">💪 Pull (Ryg, Biceps)</option>
-          <option value="Legs">🦵 Legs (Ben-træning)</option>
-        </select>
-      </div>
+      {/* INPUT-FELT */}
+      
+      {/* Vælg træningsstil og kopier prompt til ChatGPT */}
+<div className="mb-4 w-full max-w-lg">
+  <label className="block text-white font-semibold mb-2">Vælg din træningsstil:</label>
+  <select
+    onChange={(e) => handlePromptCopy(e.target.value)}
+    className="w-full px-4 py-2 bg-gray-800 text-white rounded-md border-2 border-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-400"
+  >
+    <option value="">-- Vælg --</option>
+    <option value="Full Body">💪 Full Body</option>
+    <option value="Push">🔥 Push (Bryst, Skulder, Triceps)</option>
+    <option value="Pull">💪 Pull (Ryg, Biceps)</option>
+    <option value="Legs">🦵 Legs (Ben-træning)</option>
+    <option value="Hypertrofi">🏋️ Hypertrofi (Muskelopbygning)</option>
+    <option value="Styrketræning">⚡ Styrketræning (Powerlifting)</option>
+  </select>
+</div>
 
-      {/* Kopierbar prompt-boks */}
-      {selectedPrompt && (
-        <div className="mt-4 p-4 bg-gray-800 text-white rounded-md border border-gray-600 w-full max-w-lg">
-          <p className="text-sm mb-2">🔹 Kopiér denne prompt til ChatGPT:</p>
-          <textarea
-            className="w-full p-2 bg-gray-900 text-white rounded-md"
-            rows="4"
-            readOnly
-            value={selectedPrompt}
-            onClick={(e) => e.target.select()}
-          />
-        </div>
-      )}
-
-      {/* Input-felt til træning */}
       <textarea
         className="w-full max-w-lg p-4 border-2 border-gray-700 bg-gray-800 text-white rounded-lg shadow-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
         rows="4"
@@ -136,6 +180,7 @@ export default function App() {
         onChange={(e) => setInput(e.target.value)}
       />
 
+      {/* KNAP */}
       <button
         onClick={processWorkout}
         className="mt-4 px-6 py-3 bg-blue-600 text-white font-semibold rounded-lg shadow-lg hover:bg-blue-700 transition transform hover:scale-105"
@@ -143,7 +188,7 @@ export default function App() {
         📋 Formatér Træning
       </button>
 
-      {/* Aktiv træning */}
+      {/* TABELLEN - VISER AKTIVE SÆT */}
       {workout.length > 0 && (
         <div className="w-full max-w-3xl mt-6 overflow-x-auto">
           <h2 className="text-xl font-bold text-blue-300 mb-2">Aktiv Træning</h2>
@@ -151,8 +196,11 @@ export default function App() {
             <thead className="bg-blue-600 text-white">
               <tr>
                 <th className="py-3 px-4 text-left">Øvelse</th>
+                <th className="py-3 px-4 text-center">Sæt</th>
                 <th className="py-3 px-4 text-center">Reps</th>
                 <th className="py-3 px-4 text-center">Vægt</th>
+                <th className="py-3 px-4 text-center">Volume</th>
+                <th className="py-3 px-4 text-center">YouTube</th>
                 <th className="py-3 px-4 text-center">✔️</th>
               </tr>
             </thead>
@@ -160,8 +208,20 @@ export default function App() {
               {workout.map((item) => (
                 <tr key={item.id} className="border-b border-gray-700 hover:bg-gray-700 transition">
                   <td className="py-3 px-4">{item.exercise}</td>
+                  <td className="py-3 px-4 text-center">{item.set}</td>
                   <td className="py-3 px-4 text-center">{item.reps}</td>
                   <td className="py-3 px-4 text-center">{item.weight} kg</td>
+                  <td className="py-3 px-4 text-center">{item.volume} kg</td>
+                  <td className="py-3 px-4 text-center">
+                    <a
+                      href={`https://www.youtube.com/results?search_query=how+to+${encodeURIComponent(item.exercise)}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-blue-400 underline hover:text-blue-600"
+                    >
+                      🎥 Se på YouTube
+                    </a>
+                  </td>
                   <td className="py-3 px-4 text-center">
                     <button
                       onClick={() => completeSet(item.id)}
@@ -174,6 +234,38 @@ export default function App() {
               ))}
             </tbody>
           </table>
+        </div>
+      )}
+
+      {/* TABELLEN - FÆRDIGGJORTE SÆT */}
+      {completedSets.length > 0 && (
+        <div className="w-full max-w-3xl mt-6 overflow-x-auto">
+          <h2 className="text-xl font-bold text-green-300 mb-2">✅ Færdiggjorte Sæt</h2>
+          <table className="w-full bg-gray-800 text-white shadow-lg rounded-lg overflow-hidden">
+            <thead className="bg-green-600 text-white">
+              <tr>
+                <th className="py-3 px-4 text-left">Øvelse</th>
+                <th className="py-3 px-4 text-center">Sæt</th>
+                <th className="py-3 px-4 text-center">Reps</th>
+                <th className="py-3 px-4 text-center">Vægt</th>
+                <th className="py-3 px-4 text-center">Volume</th>
+              </tr>
+            </thead>
+            <tbody>
+              {completedSets.map((item) => (
+                <tr key={item.id} className="border-b border-gray-700 hover:bg-gray-700 transition">
+                  <td className="py-3 px-4">{item.exercise}</td>
+                  <td className="py-3 px-4 text-center">{item.set}</td>
+                  <td className="py-3 px-4 text-center">{item.reps}</td>
+                  <td className="py-3 px-4 text-center">{item.weight} kg</td>
+                  <td className="py-3 px-4 text-center">{item.volume} kg</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+          <h3 className="text-xl font-bold text-green-400 mt-4">
+            🔥 Samlet Volume: {totalVolume} kg
+          </h3>
         </div>
       )}
     </div>
