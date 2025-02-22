@@ -283,68 +283,53 @@ const fallbackCopyTextToClipboard = (text) => {
 {workout.length > 0 && (
   <div className="w-full max-w-3xl mt-6 overflow-x-auto">
     <h2 className="text-xl font-bold text-blue-300 mb-2">Aktiv Træning</h2>
-    <table className="w-full bg-gray-800 text-white shadow-lg rounded-lg overflow-hidden">
-      <thead className="bg-blue-600 text-white">
-        <tr className="text-sm md:text-base">
-          <th className="py-3 px-4 text-left">Øvelse</th>
-          <th className="py-3 px-4 text-center">Sæt</th>
-          <th className="py-3 px-4 text-center">Reps</th>
-          <th className="py-3 px-4 text-center">Vægt</th>
-          <th className="py-3 px-4 text-center">Volume</th>
-          <th className="py-3 px-4 text-center">📹 Instruks</th>
-          <th className="py-3 px-4 text-center">✔️</th>
-        </tr>
-      </thead>
-      <tbody>
-        {workout.map((item) => (
-          <tr key={item.id} className="border-b border-gray-700 hover:bg-gray-700 transition">
-            <td className="py-3 px-4">{item.exercise}</td>
-            <td className="py-3 px-4 text-center">{item.set}</td>
-            <td className="py-3 px-4 text-center">
-              <input
-                type="number"
-                value={item.reps}
-                onChange={(e) => handleRepsChange(item.id, e.target.value)}
-                className="w-14 md:w-16 text-center bg-gray-700 border border-gray-600 rounded-md text-white px-2 py-1"
-              />
-            </td>
-            <td className="py-3 px-4 text-center">
-              <input
-                type="number"
-                value={item.weight}
-                onChange={(e) => handleWeightChange(item.id, e.target.value)}
-                className="w-16 md:w-20 text-center bg-gray-700 border border-gray-600 rounded-md text-white px-2 py-1"
-              />
-              <span className="text-gray-400 ml-1">kg</span>
-            </td>
-            <td className="py-3 px-4 text-center">{item.volume} kg</td>
-            <td className="py-3 px-4 text-center">
-              <a
-                href={`https://www.youtube.com/results?search_query=how+to+${encodeURIComponent(item.exercise)}`}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="flex items-center justify-center gap-2 text-blue-400 hover:text-red-500 transition"
-              >
-                <svg className="w-6 h-6" viewBox="0 0 24 24" fill="currentColor">
-                  <path d="M19.6,3.1H4.4C3.1,3.1,2,4.2,2,5.5v13c0,1.3,1.1,2.4,2.4,2.4h15.1c1.3,0,2.4-1.1,2.4-2.4v-13C22,4.2,20.9,3.1,19.6,3.1z M15.4,12.5l-5.9,3.3c-0.3,0.2-0.7,0-0.7-0.4V9.5c0-0.4,0.4-0.6,0.7-0.4l5.9,3.3C15.7,12.2,15.7,12.4,15.4,12.5z"/>
-                </svg>
-                <span className="hidden md:inline">YouTube</span>
-              </a>
-            </td>
-            <td className="py-3 px-4 text-center">
-              <button
-                onClick={() => completeSet(item.id)}
-                className="bg-green-500 text-white px-4 py-2 rounded-lg shadow-md hover:bg-green-600 transition"
-              >
-                ✅ Slut Sæt
-              </button>
-            </td>
+    <div className="overflow-x-auto rounded-lg border border-gray-700">
+      <table className="w-full min-w-[600px] bg-gray-800 text-white shadow-lg">
+        <thead className="bg-blue-600 text-white">
+          <tr>
+            <th className="py-3 px-4 text-left">Øvelse</th>
+            <th className="py-3 px-4 text-center">Sæt</th>
+            <th className="py-3 px-4 text-center">Reps</th>
+            <th className="py-3 px-4 text-center">Vægt</th>
+            <th className="py-3 px-4 text-center">Volume</th>
+            <th className="py-3 px-4 text-center">Instruks</th>
+            <th className="py-3 px-4 text-center">✔️</th>
           </tr>
-        ))}
-      </tbody>
-    </table>
+        </thead>
+        <tbody>
+          {workout.map((item) => (
+            <tr key={item.id} className="border-b border-gray-700 hover:bg-gray-700 transition">
+              <td className="py-3 px-4">{item.exercise}</td>
+              <td className="py-3 px-4 text-center">{item.set}</td>
+              <td className="py-3 px-4 text-center">{item.reps}</td>
+              <td className="py-3 px-4 text-center">{item.weight} kg</td>
+              <td className="py-3 px-4 text-center">{item.volume} kg</td>
+              <td className="py-3 px-4 text-center">
+                <a
+                  href={`https://www.youtube.com/results?search_query=how+to+${encodeURIComponent(item.exercise)}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-blue-400 flex items-center justify-center gap-2 hover:text-blue-600 transition"
+                >
+                  🎥 <span className="hidden sm:inline">Se Video</span>
+                </a>
+              </td>
+              <td className="py-3 px-4 text-center">
+                <button
+                  onClick={() => completeSet(item.id)}
+                  className="bg-green-500 text-white px-4 py-2 rounded-lg shadow-md hover:bg-green-600 transition"
+                >
+                  ✅
+                </button>
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
   </div>
 )}
+
 
 
       {/* TABELLEN - FÆRDIGGJORTE SÆT */}
