@@ -7,25 +7,36 @@ export default function App() {
   const [input, setInput] = useState("");
 
   const processWorkout = () => {
+    if (!input.trim()) {
+      alert("⚠️ Indtast din træning først!");
+      return;
+    }
+  
     const lines = input.split("\n").filter((line) => line.trim() !== "");
     const parsedWorkout = [];
-
+  
     lines.forEach((line, index) => {
-      const match = line.match(/^\s*-\s*([\w\s()'-]+)\s*(\d+)x([\d/]+)(?:\s*@\s*([\d/kg/]+))?/);
+      // Opdateret regex til at håndtere både med og uden bindestreg
+      const match = line.match(/^\s*-?\s*([\w\s()'-]+)\s*(\d+)x([\d/]+)(?:\s*@\s*([\d/kg/]+|kropsvægt|sekunder))?/i);
       if (match) {
         const exercise = match[1].trim();
         const sets = parseInt(match[2]);
         const repsList = match[3].split("/");
         const weightList = match[4] ? match[4].split("/") : [];
         let lastKnownWeight = "";
-
+  
         for (let i = 0; i < sets; i++) {
           let reps = parseInt(repsList[i] || repsList[repsList.length - 1]);
-          let weight = weightList[i] ? parseInt(weightList[i].replace("kg", "")) : lastKnownWeight;
+          let weight = weightList[i] 
+            ? weightList[i].includes("kg") || weightList[i] === "kropsvægt" || weightList[i] === "sekunder"
+              ? weightList[i]
+              : parseInt(weightList[i].replace("kg", ""))
+            : lastKnownWeight;
+            
           if (weightList[i]) lastKnownWeight = weight;
-
-          let volume = weight ? reps * weight : 0;
-
+  
+          let volume = weight && !isNaN(parseInt(weight)) ? reps * parseInt(weight) : 0;
+  
           parsedWorkout.push({
             id: `${index}-${i}`,
             exercise,
@@ -35,11 +46,19 @@ export default function App() {
             volume,
           });
         }
+      } else {
+        console.error("Kunne ikke parse linje:", line);
       }
     });
-
+  
+    if (parsedWorkout.length === 0) {
+      alert("⚠️ Ingen gyldige øvelser fundet! Sørg for at følge formatet: - Øvelse 4x10 @ 80kg");
+      return;
+    }
+  
     setWorkout(parsedWorkout);
   };
+  
 
   const completeSet = (setId) => {
     const setToComplete = workout.find((set) => set.id === setId);
