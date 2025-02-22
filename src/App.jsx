@@ -199,6 +199,13 @@ export default function App() {
     }
 };
 
+const updateSet = (setId, field, value) => {
+  setWorkout((prevWorkout) =>
+    prevWorkout.map((set) =>
+      set.id === setId ? { ...set, [field]: parseInt(value) || 0, volume: set.reps * set.weight } : set
+    )
+  );
+};
   
   // Funktion til at kopiere prompten
   const copyPromptToClipboard = () => {
