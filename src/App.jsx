@@ -287,128 +287,83 @@ const fallbackCopyTextToClipboard = (text) => {
       </button>
 
  {/* TABELLEN - VISER AKTIVE SÆT */}
-{workout.length > 0 && (
+ {workout.length > 0 && (
   <div className="w-full max-w-3xl mt-6">
     <h2 className="text-xl font-bold text-blue-300 mb-2">Aktiv Træning</h2>
-    <div className="w-full overflow-x-auto rounded-lg border border-gray-700">
-    <table className="w-full table-auto bg-gray-800 text-white shadow-lg">
-        <thead className="bg-blue-600 text-white">
-          <tr>
-          <th className="py-3 px-2 text-left w-2/5 sm:w-1/3">Øvelse</th>
-          <th className="py-3 px-2 text-center w-1/6">Sæt</th>
-          <th className="py-3 px-2 text-center w-1/6">Reps</th>
-          <th className="py-3 px-2 text-center w-1/6">Vægt</th>
-          </tr>
-        </thead>
-        <tbody>
-  {workout.map((item) => (
-    <tr
-      key={item.id}
-      className={`relative border-b border-gray-700 bg-gray-800 transition-transform duration-300 ease-in-out`}
-      onTouchStart={(e) => {
-        e.currentTarget.dataset.startX = e.touches[0].clientX;
-        e.currentTarget.dataset.swipeAction = "";
-      }}
-      onTouchMove={(e) => {
-        const diff = e.touches[0].clientX - e.currentTarget.dataset.startX;
-        e.currentTarget.style.transform = `translateX(${diff}px)`;
-
-        // Vis farveændring ved swipe-retning
-        if (diff > 50) {
-          e.currentTarget.style.backgroundColor = "#16A34A"; // Grøn (Afslut)
-          e.currentTarget.dataset.swipeAction = "complete";
-        } else if (diff < -50) {
-          e.currentTarget.style.backgroundColor = "#DC2626"; // Rød (Slet)
-          e.currentTarget.dataset.swipeAction = "delete";
-        } else {
-          e.currentTarget.style.backgroundColor = "#1E293B"; // Neutral baggrund
-          e.currentTarget.dataset.swipeAction = "";
-        }
-      }}
-      onTouchEnd={(e) => {
-        const diff = e.changedTouches[0].clientX - e.currentTarget.dataset.startX;
-        const action = e.currentTarget.dataset.swipeAction;
-
-        if ((diff > 100 && action === "complete") || (diff < -100 && action === "delete")) {
-          e.currentTarget.dataset.confirmation = "true";
-        } else {
-          e.currentTarget.style.transform = "translateX(0px)"; // Reset position
-          e.currentTarget.style.backgroundColor = "#1E293B"; // Neutral farve reset
-        }
-      }}
-    >
-      {/* Hvis brugeren har swipet langt nok, vis bekræftelse */}
-      {item.confirmation ? (
-        <td colSpan="4" className="py-3 px-4 text-center">
-          <span className="text-white font-semibold">Er du sikker?</span>
-          <div className="flex justify-center mt-2 gap-4">
-            <button
-              onClick={() => {
-                if (item.swipeAction === "complete") {
-                  completeSet(item.id);
-                } else if (item.swipeAction === "delete") {
-                  removeSet(item.id);
-                }
-              }}
-              className="px-4 py-2 bg-green-500 text-white rounded-md shadow-md hover:bg-green-600 transition"
-            >
-              ✔️ Bekræft
-            </button>
-            <button
-              onClick={() => {
-                e.currentTarget.dataset.confirmation = "false";
-                e.currentTarget.style.transform = "translateX(0px)";
-                e.currentTarget.style.backgroundColor = "#1E293B";
-              }}
-              className="px-4 py-2 bg-gray-500 text-white rounded-md shadow-md hover:bg-gray-600 transition"
-            >
-              ❌ Fortryd
-            </button>
-          </div>
-        </td>
-      ) : (
-        <>
-          {/* Tabelindhold */}
-          <td className="py-3 px-2 flex items-center w-2/5 sm:w-1/3 truncate">{item.exercise}
+    <div className="overflow-x-auto rounded-lg border border-gray-700 w-full">
+      {Object.entries(
+        workout.reduce((acc, set) => {
+          acc[set.exercise] = acc[set.exercise] || [];
+          acc[set.exercise].push(set);
+          return acc;
+        }, {})
+      ).map(([exercise, sets]) => (
+        <div key={exercise} className="mb-4 p-4 bg-gray-800 rounded-lg shadow-md">
+          <h3 className="text-lg font-bold text-blue-400 flex justify-between items-center">
+            {exercise}
             <a
-              href={`https://www.youtube.com/results?search_query=how+to+${encodeURIComponent(item.exercise)}`}
+              href={`https://www.youtube.com/results?search_query=how+to+${encodeURIComponent(exercise)}`}
               target="_blank"
               rel="noopener noreferrer"
-              className="ml-2 text-red-500 hover:text-red-700 transition"
+              className="text-red-500 hover:text-red-700 transition"
             >
               🎥
             </a>
-          </td>
-          <td className="relative py-3 px-4 text-center">{item.set}</td>
-          <td className="relative py-3 px-4 text-center">
-          <input
-             type="number"
-            className="w-full p-1 bg-gray-700 text-white text-center rounded-md border border-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-400"
-            value={item.reps > 0 ? item.reps : ""}
-            onChange={(e) => updateSet(item.id, "reps", e.target.value)}
-          />
-          </td>
-          <td className="relative py-3 px-4 text-center">
-            <input
-              type="number"
-              className="w-16 p-1 bg-gray-700 text-white text-center rounded-md border border-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-400"
-              value={item.weight > 0 ? item.weight : ""}
-              onChange={(e) => updateSet(item.id, "weight", e.target.value)}
-            />
-          </td>
-        </>
-      )}
-    </tr>
-  ))}
-</tbody>
+          </h3>
 
-
-
-
-      </table>
+          <table className="w-full mt-2 bg-gray-900 text-white rounded-lg shadow-lg">
+            <thead className="bg-blue-600 text-white">
+              <tr>
+                <th className="py-2 px-3 text-center">Sæt</th>
+                <th className="py-2 px-3 text-center">Reps</th>
+                <th className="py-2 px-3 text-center">Vægt</th>
+              </tr>
+            </thead>
+            <tbody>
+              {sets.map((item) => (
+                <tr
+                  key={item.id}
+                  className="border-b border-gray-700 hover:bg-gray-700 transition"
+                  onTouchStart={(e) => e.currentTarget.dataset.startX = e.touches[0].clientX}
+                  onTouchEnd={(e) => {
+                    const diff = e.changedTouches[0].clientX - e.currentTarget.dataset.startX;
+                    if (diff > 50) {
+                      e.currentTarget.classList.add("bg-green-600");
+                      setTimeout(() => completeSet(item.id), 300);
+                    }
+                    if (diff < -50) {
+                      e.currentTarget.classList.add("bg-red-600");
+                      setTimeout(() => removeSet(item.id), 300);
+                    }
+                  }}
+                >
+                  <td className="py-2 px-3 text-center">{item.set}</td>
+                  <td className="py-2 px-3 text-center">
+                    <input
+                      type="number"
+                      className="w-16 p-1 bg-gray-700 text-white text-center rounded-md border border-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-400"
+                      value={item.reps > 0 ? item.reps : ""}
+                      onChange={(e) => updateSet(item.id, "reps", e.target.value)}
+                    />
+                  </td>
+                  <td className="py-2 px-3 text-center">
+                    <input
+                      type="number"
+                      className="w-16 p-1 bg-gray-700 text-white text-center rounded-md border border-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-400"
+                      value={item.weight > 0 ? item.weight : ""}
+                      onChange={(e) => updateSet(item.id, "weight", e.target.value)}
+                    />
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      ))}
     </div>
   </div>
 )}
+
 
 
 
