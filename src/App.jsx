@@ -495,37 +495,56 @@ const fallbackCopyTextToClipboard = (text) => {
     </div>
   </div>
 )}
-      {/* TABELLEN - FÆRDIGGJORTE SÆT */}
-      {completedSets.length > 0 && (
-        <div className="w-full max-w-3xl mt-6 overflow-x-auto">
-          <h2 className="text-xl font-bold text-green-300 mb-2">✅ Færdiggjorte Sæt</h2>
-          <table className="w-full bg-gray-800 text-white shadow-lg rounded-lg overflow-hidden">
-            <thead className="bg-green-600 text-white">
-              <tr>
-                <th className="py-3 px-4 text-left">Øvelse</th>
-                <th className="py-3 px-4 text-center">Sæt</th>
-                <th className="py-3 px-4 text-center">Reps</th>
-                <th className="py-3 px-4 text-center">Vægt</th>
-                <th className="py-3 px-4 text-center">Volume</th>
+{/* TABELLEN - FÆRDIGGJORTE SÆT */}
+{completedSets.length > 0 && (
+  <div className="w-full max-w-3xl mt-6 overflow-x-auto">
+    <h2 className="text-xl font-bold text-green-300 mb-2">✅ Færdiggjorte Sæt</h2>
+    
+    {/* Gruppering af færdiggjorte sæt */}
+    {Object.entries(
+      completedSets.reduce((acc, set) => {
+        acc[set.exercise] = acc[set.exercise] || [];
+        acc[set.exercise].push(set);
+        return acc;
+      }, {})
+    ).map(([exercise, sets]) => (
+      <div key={exercise} className="mb-4 p-4 bg-gray-800 rounded-lg shadow-md">
+        <h3 className="text-lg font-bold text-green-400">{exercise}</h3>
+
+        <table className="w-full mt-2 bg-gray-900 text-white rounded-lg shadow-lg">
+          <thead className="bg-green-600 text-white">
+            <tr>
+              <th className="py-2 px-3 text-center">Sæt</th>
+              <th className="py-2 px-3 text-center">Reps</th>
+              <th className="py-2 px-3 text-center">Vægt</th>
+              <th className="py-2 px-3 text-center">Volume</th>
+            </tr>
+          </thead>
+          <tbody>
+            {sets.map((item) => (
+              <tr key={item.id} className="border-b border-gray-700 hover:bg-gray-700 transition">
+                <td className="py-3 px-4 text-center">{item.set}</td>
+                <td className="py-3 px-4 text-center">{item.reps}</td>
+                <td className="py-3 px-4 text-center">
+                  {typeof item.weight === "string" ? item.weight : `${item.weight} kg`}
+                </td>
+                <td className="py-3 px-4 text-center">
+                  {isNaN(item.volume) ? "-" : `${item.volume} kg`}
+                </td>
               </tr>
-            </thead>
-            <tbody>
-              {completedSets.map((item) => (
-                <tr key={item.id} className="border-b border-gray-700 hover:bg-gray-700 transition">
-                  <td className="py-3 px-4">{item.exercise}</td>
-                  <td className="py-3 px-4 text-center">{item.set}</td>
-                  <td className="py-3 px-4 text-center">{item.reps}</td>
-                  <td className="py-3 px-4 text-center">{item.weight} kg</td>
-                  <td className="py-3 px-4 text-center">{item.volume} kg</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-          <h3 className="text-xl font-bold text-green-400 mt-4">
-            🔥 Samlet Volume: {totalVolume} kg
-          </h3>
-        </div>
-      )}
+            ))}
+          </tbody>
+        </table>
+      </div>
+    ))}
+
+    {/* Total volume beregning */}
+    <h3 className="text-xl font-bold text-green-400 mt-4">
+      🔥 Samlet Volume: {completedSets.reduce((sum, set) => sum + (isNaN(set.volume) ? 0 : set.volume), 0)} kg
+    </h3>
+  </div>
+)}
+
     </div>
   );
 }
