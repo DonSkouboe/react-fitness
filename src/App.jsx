@@ -290,7 +290,7 @@ const fallbackCopyTextToClipboard = (text) => {
 {workout.length > 0 && (
   <div className="w-full max-w-3xl mt-6">
     <h2 className="text-xl font-bold text-blue-300 mb-2">Aktiv Træning</h2>
-    <div className="overflow-x-auto rounded-lg border border-gray-700">
+    <div className="overflow-x-auto rounded-lg border border-gray-700 w-full max-w-[90vw]">
       <table className="w-full min-w-[750px] bg-gray-800 text-white shadow-lg">
         <thead className="bg-blue-600 text-white">
           <tr>
@@ -304,60 +304,57 @@ const fallbackCopyTextToClipboard = (text) => {
           </tr>
         </thead>
         <tbody>
-          {workout.map((item) => (
-            <tr key={item.id} className="border-b border-gray-700 hover:bg-gray-700 transition">
-              <td className="py-3 px-4">{item.exercise}</td>
-              <td className="py-3 px-4 text-center">{item.set}</td>
+  {workout.map((item) => (
+    <tr
+      key={item.id}
+      className="border-b border-gray-700 hover:bg-gray-700 transition"
+      onTouchStart={(e) => e.currentTarget.dataset.startX = e.touches[0].clientX}
+      onTouchEnd={(e) => {
+        const diff = e.changedTouches[0].clientX - e.currentTarget.dataset.startX;
+        if (diff > 50) {
+          if (window.confirm("✅ Vil du afslutte dette sæt?")) {
+            completeSet(item.id);
+          }
+        }
+        if (diff < -50) {
+          if (window.confirm("❌ Vil du slette dette sæt?")) {
+            removeSet(item.id);
+          }
+        }
+      }}
+    >
+      <td className="py-3 px-4 flex items-center">
+        {item.exercise}
+        <a
+          href={`https://www.youtube.com/results?search_query=how+to+${encodeURIComponent(item.exercise)}`}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="ml-2 text-red-500 hover:text-red-700 transition"
+        >
+          🎥
+        </a>
+      </td>
+      <td className="py-3 px-4 text-center">{item.set}</td>
+      <td className="py-3 px-4 text-center">
+        <input
+          type="number"
+          className="w-16 p-1 bg-gray-700 text-white text-center rounded-md border border-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-400"
+          value={item.reps > 0 ? item.reps : ""}
+          onChange={(e) => updateSet(item.id, "reps", e.target.value)}
+        />
+      </td>
+      <td className="py-3 px-4 text-center">
+        <input
+          type="number"
+          className="w-16 p-1 bg-gray-700 text-white text-center rounded-md border border-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-400"
+          value={item.weight > 0 ? item.weight : ""}
+          onChange={(e) => updateSet(item.id, "weight", e.target.value)}
+        />
+      </td>
+    </tr>
+  ))}
+</tbody>
 
-              {/* Redigerbar Reps */}
-              <td className="py-3 px-4 text-center">
-  <input
-    type="number"
-    className="w-16 p-1 bg-gray-700 text-white text-center rounded-md border border-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-400"
-    value={item.reps}
-    onChange={(e) => updateSet(item.id, "reps", e.target.value)}
-  />
-</td>
-
-<td className="py-3 px-4 text-center">
-  <input
-    type="number"
-    className="w-16 p-1 bg-gray-700 text-white text-center rounded-md border border-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-400"
-    value={item.weight}
-    onChange={(e) => updateSet(item.id, "weight", e.target.value)}
-  />
-</td>
-
-
-              <td className="py-3 px-4 text-center">{item.volume} kg</td>
-
-              {/* YouTube-link med større ikon */}
-              <td className="py-3 px-4 text-center">
-  <a
-    href={`https://www.youtube.com/results?search_query=how+to+${encodeURIComponent(item.exercise)}`}
-    target="_blank"
-    rel="noopener noreferrer"
-    className="flex items-center justify-center gap-2 text-red-500 hover:text-red-700 transition"
-  >
-    <svg className="w-8 h-8 fill-current" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512">
-      <path d="M549.7 124.1c-6.3-23.5-24.8-42-48.3-48.3C457.6 64 288 64 288 64s-169.6 0-213.4 11.8c-23.5 6.3-42 24.8-48.3 48.3C16 167.9 16 256 16 256s0 88.1 10.3 131.9c6.3 23.5 24.8 42 48.3 48.3C118.4 448 288 448 288 448s169.6 0 213.4-11.8c23.5-6.3 42-24.8 48.3-48.3C560 344.1 560 256 560 256s0-88.1-10.3-131.9zM232 336V176l144 80-144 80z"/>
-    </svg>
-    <span className="hidden sm:inline">Se Video</span>
-  </a>
-</td>
-
-              {/* Slut Sæt-knap */}
-              <td className="py-3 px-4 text-center">
-                <button
-                  onClick={() => completeSet(item.id)}
-                  className="bg-green-500 text-white px-4 py-2 rounded-lg shadow-md hover:bg-green-600 transition"
-                >
-                  ✅
-                </button>
-              </td>
-            </tr>
-          ))}
-        </tbody>
       </table>
     </div>
   </div>
