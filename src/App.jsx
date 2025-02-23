@@ -438,66 +438,57 @@ const fallbackCopyTextToClipboard = (text) => {
 
       {/* BEKRÆFTELSESRÆKKER */}
       {confirmingSet === item.id && (
-        <tr className="bg-green-500 text-white">
-          <td colSpan="3" className="py-2 px-4 text-center">
-            ✅ Vil du færdiggøre dette sæt?
-            <button 
-              onClick={() => {
-                completeSet(item.id);
-                setConfirmingSet(null);
-              }}
-              className="ml-4 px-4 py-2 bg-white text-green-700 rounded-lg"
-            >
-              Bekræft
-            </button>
-            <button 
-            onClick={() => {
-              setConfirmingSet(null);
-              setConfirmingDelete(null);
+  <tr className="bg-green-500 text-white">
+    <td colSpan="3" className="py-2 px-4 text-center">
+      ✅ Vil du færdiggøre dette sæt?
+      <button 
+        onClick={() => {
+          completeSet(item.id);
+          setConfirmingSet(null);
+        }}
+        className="ml-4 px-4 py-2 bg-white text-green-700 rounded-lg"
+      >
+        Bekræft
+      </button>
+      <button 
+        onClick={() => {
+          setConfirmingSet(null);
+          document.getElementById(`set-${item.id}`).style.backgroundColor = ""; // Reset farve
+        }}
+        className="ml-2 px-4 py-2 bg-gray-700 text-white rounded-lg"
+      >
+        Annuller
+      </button>
+    </td>
+  </tr>
+)}
 
-              // Find den tilsvarende række og reset positionen
-              const element = document.querySelector(`[data-id='${item.id}']`);
-              if (element) {
-                element.style.transform = "translateX(0px)";
-              }
-            }}
-            className="ml-2 px-4 py-2 bg-gray-700 text-white rounded-lg"
-          >
-            Annuller
-          </button>
+{confirmingDelete === item.id && (
+  <tr className="bg-red-500 text-white">
+    <td colSpan="3" className="py-2 px-4 text-center">
+      ❌ Vil du slette dette sæt?
+      <button 
+        onClick={() => {
+          removeSet(item.id);
+          setConfirmingDelete(null);
+        }}
+        className="ml-4 px-4 py-2 bg-white text-red-700 rounded-lg"
+      >
+        Bekræft
+      </button>
+      <button 
+        onClick={() => {
+          setConfirmingDelete(null);
+          document.getElementById(`set-${item.id}`).style.backgroundColor = ""; // Reset farve
+        }}
+        className="ml-2 px-4 py-2 bg-gray-700 text-white rounded-lg"
+      >
+        Annuller
+      </button>
+    </td>
+  </tr>
+)}
 
-          </td>
-        </tr>
-      )}
-
-      {confirmingDelete === item.id && (
-        <tr className="bg-red-500 text-white">
-          <td colSpan="3" className="py-2 px-4 text-center">
-            ❌ Vil du slette dette sæt?
-            <button 
-              onClick={() => {
-                removeSet(item.id);
-                setConfirmingDelete(null);
-              }}
-              className="ml-4 px-4 py-2 bg-white text-red-700 rounded-lg"
-            >
-              Bekræft
-            </button>
-            <button 
-              onClick={() => {
-                setConfirmingDelete(null);
-                const element = document.querySelector(`[data-id='${item.id}']`);
-                if (element) {
-                  element.style.transform = "translateX(0px)";
-                }
-              }}
-              className="ml-2 px-4 py-2 bg-gray-700 text-white rounded-lg"
-            >
-              Annuller
-            </button>
-          </td>
-        </tr>
-      )}
     </>
   ))}
 </tbody>
