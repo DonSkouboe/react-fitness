@@ -559,14 +559,13 @@ const fallbackCopyTextToClipboard = (text) => {
   </div>
 )}
           
+          <Route index element={<h2>🏠 Startside</h2>} />
+          <Route path="/workout" element={<h2>💪 Træning</h2>} />
+          <Route path="/profile" element={<Profile />} />
         
 
         <BottomNav />
     </div>
-          
-          <Route index element={<h2>🏠 Startside</h2>} />
-          <Route path="/workout" element={<h2>💪 Træning</h2>} />
-          <Route path="/profile" element={<Profile />} />
     </Routes>
 </Router>
 
