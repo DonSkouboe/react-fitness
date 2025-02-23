@@ -290,14 +290,14 @@ const fallbackCopyTextToClipboard = (text) => {
 {workout.length > 0 && (
   <div className="w-full max-w-3xl mt-6">
     <h2 className="text-xl font-bold text-blue-300 mb-2">Aktiv Træning</h2>
-    <div className="overflow-x-auto rounded-lg border border-gray-700 w-full max-w-[90vw]">
-      <table className="w-full min-w-[750px] bg-gray-800 text-white shadow-lg">
+    <div className="w-full overflow-x-auto rounded-lg border border-gray-700">
+    <table className="w-full table-auto bg-gray-800 text-white shadow-lg">
         <thead className="bg-blue-600 text-white">
           <tr>
-            <th className="py-3 px-4 text-left">Øvelse</th>
-            <th className="py-3 px-4 text-center">Sæt</th>
-            <th className="py-3 px-4 text-center">Reps</th>
-            <th className="py-3 px-4 text-center">Vægt</th>
+          <th className="py-3 px-2 text-left w-2/5 sm:w-1/3">Øvelse</th>
+          <th className="py-3 px-2 text-center w-1/6">Sæt</th>
+          <th className="py-3 px-2 text-center w-1/6">Reps</th>
+          <th className="py-3 px-2 text-center w-1/6">Vægt</th>
           </tr>
         </thead>
         <tbody>
@@ -369,8 +369,7 @@ const fallbackCopyTextToClipboard = (text) => {
       ) : (
         <>
           {/* Tabelindhold */}
-          <td className="relative py-3 px-4 flex items-center">
-            {item.exercise}
+          <td className="py-3 px-2 flex items-center w-2/5 sm:w-1/3 truncate">{item.exercise}
             <a
               href={`https://www.youtube.com/results?search_query=how+to+${encodeURIComponent(item.exercise)}`}
               target="_blank"
@@ -382,12 +381,12 @@ const fallbackCopyTextToClipboard = (text) => {
           </td>
           <td className="relative py-3 px-4 text-center">{item.set}</td>
           <td className="relative py-3 px-4 text-center">
-            <input
-              type="number"
-              className="w-16 p-1 bg-gray-700 text-white text-center rounded-md border border-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-400"
-              value={item.reps > 0 ? item.reps : ""}
-              onChange={(e) => updateSet(item.id, "reps", e.target.value)}
-            />
+          <input
+             type="number"
+            className="w-full p-1 bg-gray-700 text-white text-center rounded-md border border-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-400"
+            value={item.reps > 0 ? item.reps : ""}
+            onChange={(e) => updateSet(item.id, "reps", e.target.value)}
+          />
           </td>
           <td className="relative py-3 px-4 text-center">
             <input
