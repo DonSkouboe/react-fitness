@@ -204,6 +204,9 @@ export default function WorkoutPage({
                 <th className="py-2 px-3 text-center">Sæt</th>
                 <th className="py-2 px-3 text-center">Reps</th>
                 <th className="py-2 px-3 text-center">Vægt</th>
+                <td className="py-3 px-4 text-center">
+                {isNaN(set.volume) ? "-" : `${set.volume} kg`}
+                </td>
               </tr>
             </thead>
             <tbody>
@@ -211,11 +214,17 @@ export default function WorkoutPage({
                 <tr key={set.id} className="border-b border-gray-700 hover:bg-gray-700 transition">
                   <td className="py-3 px-4 text-center">{set.set}</td>
                   <td className="py-3 px-4 text-center">{set.reps}</td>
-                  <td className="py-3 px-4 text-center">{set.weight} kg</td>
+                  <td className="py-3 px-4 text-center">
+  {typeof set.weight === "string" && set.weight.includes("kg") ? set.weight : `${set.weight} kg`}
+</td>
                 </tr>
               ))}
             </tbody>
           </table>
+          <h3 className="text-xl font-bold text-green-400 mt-4">
+  🔥 Samlet Volume: {completedSets.reduce((sum, set) => sum + (isNaN(set.volume) ? 0 : set.volume), 0)} kg
+</h3>
+
         </div>
       )}
 
