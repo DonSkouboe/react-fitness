@@ -312,10 +312,10 @@ const fallbackCopyTextToClipboard = (text) => {
               className="text-red-500 hover:text-red-700 transition flex items-center"
             >
               <svg className="w-6 h-6 fill-current text-red-600 hover:text-red-700 transition" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512">
-              <path d="M549.7 124.1c-6.3-23.5-24.8-42-48.3-48.3C457.6 64 288 64 288 64s-169.6 0-213.4 11.8c-23.5 6.3-42 24.8-48.3 48.3C16 167.9 16 256 16 256s0 88.1 10.3 131.9c6.3 23.5 24.8 42 48.3 48.3C118.4 448 288 448 288 448s169.6 0 213.4-11.8c23.5-6.3 42-24.8 48.3-48.3C560 344.1 560 256 560 256s0-88.1-10.3-131.9zM232 336V176l144 80-144 80z"/>
-            </svg>
-            <span className="hidden sm:inline ml-1">Instruks</span>
-          </a>
+                <path d="M549.7 124.1c-6.3-23.5-24.8-42-48.3-48.3C457.6 64 288 64 288 64s-169.6 0-213.4 11.8c-23.5 6.3-42 24.8-48.3 48.3C16 167.9 16 256 16 256s0 88.1 10.3 131.9c6.3 23.5 24.8 42 48.3 48.3C118.4 448 288 448 288 448s169.6 0 213.4-11.8c23.5-6.3 42-24.8 48.3-48.3C560 344.1 560 256 560 256s0-88.1-10.3-131.9zM232 336V176l144 80-144 80z"/>
+              </svg>
+              <span className="hidden sm:inline ml-1">Instruks</span>
+            </a>
           </h3>
 
           <table className="w-full mt-2 bg-gray-900 text-white rounded-lg shadow-lg">
@@ -327,99 +327,57 @@ const fallbackCopyTextToClipboard = (text) => {
               </tr>
             </thead>
             <tbody>
-  {workout.map((item) => (
-    <motion.tr
-    key={item.id}
-    className="border-b border-gray-700 transition relative"
-    initial={{ x: 0 }}
-    animate={{ x: 0 }}
-    exit={{ x: 0 }}
-    drag="x"
-    dragConstraints={{ left: -100, right: 100 }}
-    dragElastic={0.3}
-    onDrag={(event, info) => {
-      // 🎨 Ændrer baggrund farve baseret på swipe-retning
-      const element = event.target.closest("tr");
-      if (info.offset.x > 50) {
-        element.style.backgroundColor = "#16a34a"; // Grøn (Afslut)
-      } else if (info.offset.x < -50) {
-        element.style.backgroundColor = "#dc2626"; // Rød (Slet)
-      } else {
-        element.style.backgroundColor = ""; // Normal baggrund
-      }
-    }}
-    onDragEnd={(event, info) => {
-      const element = event.target.closest("tr");
-  
-      if (info.offset.x > 80) {
-        // **Swipe højre - vis bekræftelsesknap**
-        setConfirmingSet(item.id);
-        element.style.backgroundColor = "#16a34a";
-      } else if (info.offset.x < -80) {
-        // **Swipe venstre - vis bekræftelsesknap**
-        setConfirmingDelete(item.id);
-        element.style.backgroundColor = "#dc2626";
-      } else {
-        // **Reset hvis swipe ikke er langt nok**
-        element.style.backgroundColor = "";
-      }
-    }}
-  >
-    <td className="py-3 px-4 text-center">{item.set}</td>
-  
-    {/* 🔢 Input for reps */}
-    <td className="py-3 px-4 text-center">
-      <input
-        type="number"
-        className="w-16 p-1 bg-gray-700 text-white text-center rounded-md border border-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-400"
-        value={item.reps > 0 ? item.reps : ""}
-        onChange={(e) => updateSet(item.id, "reps", e.target.value)}
-      />
-    </td>
-  
-    {/* ⚖️ Input for vægt */}
-    <td className="py-3 px-4 text-center">
-      <input
-        type="number"
-        className="w-16 p-1 bg-gray-700 text-white text-center rounded-md border border-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-400"
-        value={item.weight > 0 ? item.weight : ""}
-        onChange={(e) => updateSet(item.id, "weight", e.target.value)}
-      />
-    </td>
-  
-    {/* ✅ Bekræft afslut */}
-    {confirmingSet === item.id && (
-      <td className="absolute right-3 bg-green-500 text-white px-4 py-2 rounded-md shadow-md">
-        <button onClick={() => { completeSet(item.id); setConfirmingSet(null); }}>
-          ✅ Bekræft
-        </button>
-      </td>
-    )}
-  
-    {/* ❌ Bekræft slet */}
-    {confirmingDelete === item.id && (
-      <td className="absolute right-3 bg-red-500 text-white px-4 py-2 rounded-md shadow-md">
-        <button onClick={() => { removeSet(item.id); setConfirmingDelete(null); }}>
-          ❌ Bekræft
-        </button>
-      </td>
-    )}
-  </motion.tr>
-  
-  ))}
-</tbody>
+              {sets.map((item) => (
+                <motion.tr
+                  key={item.id}
+                  className="border-b border-gray-700 transition"
+                  initial={{ x: 0 }}
+                  animate={{ x: 0 }}
+                  exit={{ x: 0 }}
+                  drag="x"
+                  dragConstraints={{ left: -100, right: 100 }}
+                  dragElastic={0.3}
+                  onDrag={(event, info) => {
+                    const element = event.target.closest("tr");
+                    if (info.offset.x > 50) {
+                      element.style.backgroundColor = "#16a34a";
+                      element.dataset.swipeText = "✅ Færdiggør sæt";
+                    } else if (info.offset.x < -50) {
+                      element.style.backgroundColor = "#dc2626";
+                      element.dataset.swipeText = "❌ Slet sæt";
+                    } else {
+                      element.style.backgroundColor = "";
+                      element.dataset.swipeText = "";
+                    }
+                  }}
+                  onDragEnd={(event, info) => {
+                    const element = event.target.closest("tr");
+                    if (info.offset.x > 80) {
+                      setConfirmingSet(item.id);
+                      element.style.backgroundColor = "#16a34a";
+                      element.dataset.swipeText = "✅ Færdiggør sæt";
+                    } else if (info.offset.x < -80) {
+                      setConfirmingDelete(item.id);
+                      element.style.backgroundColor = "#dc2626";
+                      element.dataset.swipeText = "❌ Slet sæt";
+                    } else {
+                      element.style.backgroundColor = "";
+                      element.dataset.swipeText = "";
+                    }
+                  }}
+                >
+                  <td className="py-3 px-4 text-center">{item.set}</td>
+                  <td className="py-3 px-4 text-center">{item.reps}</td>
+                  <td className="py-3 px-4 text-center">{item.weight}</td>
+                </motion.tr>
+              ))}
+            </tbody>
           </table>
         </div>
       ))}
     </div>
   </div>
 )}
-
-
-
-
-
-
       {/* TABELLEN - FÆRDIGGJORTE SÆT */}
       {completedSets.length > 0 && (
         <div className="w-full max-w-3xl mt-6 overflow-x-auto">
