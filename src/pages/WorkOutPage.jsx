@@ -149,13 +149,15 @@ export default function WorkoutPage({
               ))}
 
               {/* BEKRÆFT FÆRDIGGØRELSE */}
-              {confirmingSet === sets[0]?.id && (
+              {confirmingSet && sets.some((s) => s.id === confirmingSet) && (
                 <div className="bg-green-500 text-white text-center mt-2 p-2 rounded-lg">
                   ✅ Vil du færdiggøre denne øvelse?
                   <button
                     onClick={() => {
-                      completeSet(sets[0].id);
-                      setConfirmingSet(null);
+                      if (confirmingSet) {
+                        completeSet(confirmingSet);
+                        setConfirmingSet(null);
+                      }
                     }}
                     className="ml-4 px-4 py-2 bg-white text-green-700 rounded-lg"
                   >
