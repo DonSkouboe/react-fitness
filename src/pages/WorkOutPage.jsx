@@ -217,8 +217,11 @@ export default function WorkoutPage({
                   <td className="py-3 px-4 text-center">{set.set}</td>
                   <td className="py-3 px-4 text-center">{set.reps}</td>
                   <td className="py-3 px-4 text-center">
-  {typeof set.weight === "string" && set.weight.includes("kg") ? set.weight : `${set.weight} kg`}
-</td>
+                    {typeof set.weight === "string" && set.weight.includes("kg") ? set.weight : `${set.weight} kg`}
+                  </td>
+                  <td className="py-3 px-4 text-center">
+                    {set.volume !== undefined && !isNaN(set.volume) ? `${set.volume} kg` : "-"}
+                  </td>
                 </tr>
               ))}
             </tbody>
