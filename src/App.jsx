@@ -304,7 +304,7 @@ const fallbackCopyTextToClipboard = (text) => {
   {workout.map((item) => (
     <tr
       key={item.id}
-      className="relative border-b border-gray-700 bg-gray-800 transition-transform duration-300 ease-in-out"
+      className={`relative border-b border-gray-700 bg-gray-800 transition-transform duration-300 ease-in-out`}
       onTouchStart={(e) => {
         e.currentTarget.dataset.startX = e.touches[0].clientX;
         e.currentTarget.dataset.swipeAction = "";
@@ -329,48 +329,80 @@ const fallbackCopyTextToClipboard = (text) => {
         const diff = e.changedTouches[0].clientX - e.currentTarget.dataset.startX;
         const action = e.currentTarget.dataset.swipeAction;
 
-        if (diff > 100 && action === "complete") {
-          completeSet(item.id);
-        } else if (diff < -100 && action === "delete") {
-          removeSet(item.id);
+        if ((diff > 100 && action === "complete") || (diff < -100 && action === "delete")) {
+          e.currentTarget.dataset.confirmation = "true";
+        } else {
+          e.currentTarget.style.transform = "translateX(0px)"; // Reset position
+          e.currentTarget.style.backgroundColor = "#1E293B"; // Neutral farve reset
         }
-
-        e.currentTarget.style.transform = "translateX(0px)"; // Reset position
-        e.currentTarget.style.backgroundColor = "#1E293B"; // Neutral farve reset
       }}
     >
-      {/* Tabelindhold */}
-      <td className="relative py-3 px-4 flex items-center">
-        {item.exercise}
-        <a
-          href={`https://www.youtube.com/results?search_query=how+to+${encodeURIComponent(item.exercise)}`}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="ml-2 text-red-500 hover:text-red-700 transition"
-        >
-          🎥
-        </a>
-      </td>
-      <td className="relative py-3 px-4 text-center">{item.set}</td>
-      <td className="relative py-3 px-4 text-center">
-        <input
-          type="number"
-          className="w-16 p-1 bg-gray-700 text-white text-center rounded-md border border-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-400"
-          value={item.reps > 0 ? item.reps : ""}
-          onChange={(e) => updateSet(item.id, "reps", e.target.value)}
-        />
-      </td>
-      <td className="relative py-3 px-4 text-center">
-        <input
-          type="number"
-          className="w-16 p-1 bg-gray-700 text-white text-center rounded-md border border-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-400"
-          value={item.weight > 0 ? item.weight : ""}
-          onChange={(e) => updateSet(item.id, "weight", e.target.value)}
-        />
-      </td>
+      {/* Hvis brugeren har swipet langt nok, vis bekræftelse */}
+      {item.confirmation ? (
+        <td colSpan="4" className="py-3 px-4 text-center">
+          <span className="text-white font-semibold">Er du sikker?</span>
+          <div className="flex justify-center mt-2 gap-4">
+            <button
+              onClick={() => {
+                if (item.swipeAction === "complete") {
+                  completeSet(item.id);
+                } else if (item.swipeAction === "delete") {
+                  removeSet(item.id);
+                }
+              }}
+              className="px-4 py-2 bg-green-500 text-white rounded-md shadow-md hover:bg-green-600 transition"
+            >
+              ✔️ Bekræft
+            </button>
+            <button
+              onClick={() => {
+                e.currentTarget.dataset.confirmation = "false";
+                e.currentTarget.style.transform = "translateX(0px)";
+                e.currentTarget.style.backgroundColor = "#1E293B";
+              }}
+              className="px-4 py-2 bg-gray-500 text-white rounded-md shadow-md hover:bg-gray-600 transition"
+            >
+              ❌ Fortryd
+            </button>
+          </div>
+        </td>
+      ) : (
+        <>
+          {/* Tabelindhold */}
+          <td className="relative py-3 px-4 flex items-center">
+            {item.exercise}
+            <a
+              href={`https://www.youtube.com/results?search_query=how+to+${encodeURIComponent(item.exercise)}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="ml-2 text-red-500 hover:text-red-700 transition"
+            >
+              🎥
+            </a>
+          </td>
+          <td className="relative py-3 px-4 text-center">{item.set}</td>
+          <td className="relative py-3 px-4 text-center">
+            <input
+              type="number"
+              className="w-16 p-1 bg-gray-700 text-white text-center rounded-md border border-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-400"
+              value={item.reps > 0 ? item.reps : ""}
+              onChange={(e) => updateSet(item.id, "reps", e.target.value)}
+            />
+          </td>
+          <td className="relative py-3 px-4 text-center">
+            <input
+              type="number"
+              className="w-16 p-1 bg-gray-700 text-white text-center rounded-md border border-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-400"
+              value={item.weight > 0 ? item.weight : ""}
+              onChange={(e) => updateSet(item.id, "weight", e.target.value)}
+            />
+          </td>
+        </>
+      )}
     </tr>
   ))}
 </tbody>
+
 
 
 
