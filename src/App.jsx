@@ -70,23 +70,14 @@ export default function App() {
 
   // 📌 Funktion til at markere et sæt som færdigt
   const completeSet = (setId) => {
-    const setToComplete = workout.find((set) => set.id === setId);
-    if (setToComplete) {
-      setCompletedSets([...completedSets, setToComplete]);
-      setWorkout(workout.filter((set) => set.id !== setId));
-    }
+    setWorkout((prevWorkout) => prevWorkout.filter((set) => set.id !== setId));
+    setCompletedSets((prevCompleted) => {
+      const setToComplete = workout.find((set) => set.id === setId);
+      return setToComplete ? [...prevCompleted, setToComplete] : prevCompleted;
+    });
   };
 
-  <WorkoutPage 
-  workout={workout} 
-  setWorkout={setWorkout} 
-  completedSets={completedSets} 
-  input={input} 
-  setInput={setInput} 
-  processWorkout={processWorkout} 
-  completeSet={completeSet} // 🚀 Tilføj denne
-  removeSet={removeSet} 
-/>
+ 
 
   // 📌 Funktion til at slette et sæt
   const removeSet = (setId) => {

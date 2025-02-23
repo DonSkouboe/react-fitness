@@ -156,7 +156,7 @@ export default function WorkoutPage({
                     onClick={() => {
                       if (confirmingSet) {
                         completeSet(confirmingSet);
-                        setConfirmingSet(null);
+                        setTimeout(() => setConfirmingSet(null), 100); // Lidt delay for at sikre UI-opdatering
                       }
                     }}
                     className="ml-4 px-4 py-2 bg-white text-green-700 rounded-lg"
@@ -223,9 +223,9 @@ export default function WorkoutPage({
               ))}
             </tbody>
           </table>
-          <h3 className="text-xl font-bold text-green-400 mt-4">
-  🔥 Samlet Volume: {completedSets.reduce((sum, set) => sum + (isNaN(set.volume) ? 0 : set.volume), 0)} kg
-</h3>
+          <td className="py-3 px-4 text-center">
+  {set.volume !== undefined && !isNaN(set.volume) ? `${set.volume} kg` : "-"}
+</td>
 
         </div>
       )}
