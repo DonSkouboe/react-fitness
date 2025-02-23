@@ -253,7 +253,6 @@ const fallbackCopyTextToClipboard = (text) => {
   
   return (
     <Router>
-      <Routes>
     <div className="min-h-screen flex flex-col items-center justify-center bg-gray-900 text-white p-6">
       
       <h1 className="text-4xl font-bold text-blue-400 mb-6">🏋️ Fit-with-ChatGPT 🚀</h1>
@@ -558,15 +557,14 @@ const fallbackCopyTextToClipboard = (text) => {
     </h3>
   </div>
 )}
-          
-          <Route index element={<h2>🏠 Startside</h2>} />
+        
+          <Route path="/" element={<h2>🏠 Startside</h2>} />
           <Route path="/workout" element={<h2>💪 Træning</h2>} />
           <Route path="/profile" element={<Profile />} />
-        
+        </Routes>
 
         <BottomNav />
     </div>
-    </Routes>
 </Router>
 
   );
