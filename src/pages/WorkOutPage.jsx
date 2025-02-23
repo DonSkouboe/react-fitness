@@ -8,7 +8,7 @@ export default function WorkoutPage({
   input,
   setInput,
   processWorkout,
-  completeSets,
+  completeSet, // 🚀 Husk at modtage denne prop!
   removeSet
 }) {
   const [confirmingSet, setConfirmingSet] = useState(null);
@@ -155,7 +155,7 @@ export default function WorkoutPage({
                   <button
                     onClick={() => {
                       if (confirmingSet) {
-                        completeSets(confirmingSet);
+                        completeSet(confirmingSet);
                         setConfirmingSet(null);
                       }
                     }}

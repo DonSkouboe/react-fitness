@@ -14,7 +14,7 @@ export default function App() {
   const [confirmingDelete, setConfirmingDelete] = useState(null);
   const [editingSet, setEditingSet] = useState(null);
   const [tempValue, setTempValue] = useState("");
-
+ 
   // 📌 Funktion til at processere input og lave træningsdata
   const processWorkout = () => {
     if (!input.trim()) {
@@ -76,6 +76,17 @@ export default function App() {
       setWorkout(workout.filter((set) => set.id !== setId));
     }
   };
+
+  <WorkoutPage 
+  workout={workout} 
+  setWorkout={setWorkout} 
+  completedSets={completedSets} 
+  input={input} 
+  setInput={setInput} 
+  processWorkout={processWorkout} 
+  completeSet={completeSet} // 🚀 Tilføj denne
+  removeSet={removeSet} 
+/>
 
   // 📌 Funktion til at slette et sæt
   const removeSet = (setId) => {
