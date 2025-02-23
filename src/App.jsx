@@ -428,10 +428,11 @@ const fallbackCopyTextToClipboard = (text) => {
       }}
       className="cursor-pointer hover:text-blue-400 transition"
     >
-      {item.weight} kg
+      {typeof item.weight === "string" && item.weight.includes("kg") ? item.weight : `${item.weight} kg`}
     </span>
   )}
 </td>
+
 
       </motion.tr>
 
