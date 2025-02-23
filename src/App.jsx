@@ -68,7 +68,7 @@ export default function App() {
     }
   };
 
-  const totalVolume = [...workout, ...completedSets].reduce((sum, set) => sum + set.volume, 0);
+  const totalVolume = [...workout, ...completedSets].reduce((sum, set) => sum + (set.reps * (set.weight || 0)), 0);
 
   const prompts = {
     "Full Body": `
@@ -287,10 +287,10 @@ const fallbackCopyTextToClipboard = (text) => {
       </button>
 
  {/* TABELLEN - VISER AKTIVE SÆT */}
-{workout.length > 0 && (
+ {workout.length > 0 && (
   <div className="w-full max-w-3xl mt-6">
     <h2 className="text-xl font-bold text-blue-300 mb-2">Aktiv Træning</h2>
-    <div className="overflow-x-auto rounded-lg border border-gray-700 w-full max-w-[90vw]">
+    <div className="overflow-x-auto rounded-lg border border-gray-700">
       <table className="w-full min-w-[750px] bg-gray-800 text-white shadow-lg">
         <thead className="bg-blue-600 text-white">
           <tr>
@@ -301,61 +301,39 @@ const fallbackCopyTextToClipboard = (text) => {
           </tr>
         </thead>
         <tbody>
-  {workout.map((item) => (
-    <tr
-      key={item.id}
-      className="border-b border-gray-700 hover:bg-gray-700 transition"
-      onTouchStart={(e) => e.currentTarget.dataset.startX = e.touches[0].clientX}
-      onTouchEnd={(e) => {
-        const diff = e.changedTouches[0].clientX - e.currentTarget.dataset.startX;
-        if (diff > 50) {
-          if (window.confirm("✅ Vil du afslutte dette sæt?")) {
-            completeSet(item.id);
-          }
-        }
-        if (diff < -50) {
-          if (window.confirm("❌ Vil du slette dette sæt?")) {
-            removeSet(item.id);
-          }
-        }
-      }}
-    >
-      <td className="py-3 px-4 flex items-center">
-        {item.exercise}
-        <a
-          href={`https://www.youtube.com/results?search_query=how+to+${encodeURIComponent(item.exercise)}`}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="ml-2 text-red-500 hover:text-red-700 transition"
-        >
-          🎥
-        </a>
-      </td>
-      <td className="py-3 px-4 text-center">{item.set}</td>
-      <td className="py-3 px-4 text-center">
-        <input
-          type="number"
-          className="w-16 p-1 bg-gray-700 text-white text-center rounded-md border border-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-400"
-          value={item.reps > 0 ? item.reps : ""}
-          onChange={(e) => updateSet(item.id, "reps", e.target.value)}
-        />
-      </td>
-      <td className="py-3 px-4 text-center">
-        <input
-          type="number"
-          className="w-16 p-1 bg-gray-700 text-white text-center rounded-md border border-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-400"
-          value={item.weight > 0 ? item.weight : ""}
-          onChange={(e) => updateSet(item.id, "weight", e.target.value)}
-        />
-      </td>
-    </tr>
-  ))}
-</tbody>
-
+          {workout.map((item) => (
+            <tr key={item.id} className="border-b border-gray-700 hover:bg-gray-700 transition">
+              <td className="py-3 px-4">{item.exercise}</td>
+              <td className="py-3 px-4 text-center">{item.set}</td>
+              <td className="py-3 px-4 text-center">
+                <input
+                  type="number"
+                  className="w-16 p-1 bg-gray-700 text-white text-center rounded-md border border-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-400"
+                  value={item.reps}
+                  onChange={(e) => updateSet(item.id, "reps", e.target.value)}
+                />
+              </td>
+              <td className="py-3 px-4 text-center">
+                <input
+                  type="number"
+                  className="w-16 p-1 bg-gray-700 text-white text-center rounded-md border border-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-400"
+                  value={item.weight}
+                  onChange={(e) => updateSet(item.id, "weight", e.target.value)}
+                />
+              </td>
+            </tr>
+          ))}
+        </tbody>
       </table>
     </div>
+
+    {/* Samlet Volume under tabellen */}
+    <h3 className="text-xl font-bold text-green-400 mt-4 text-center">
+      🔥 Samlet Volume: {totalVolume} kg
+    </h3>
   </div>
 )}
+
 
 
 
