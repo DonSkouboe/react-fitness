@@ -306,195 +306,144 @@ const fallbackCopyTextToClipboard = (text) => {
       </button>
 
  {/* TABELLEN - VISER AKTIVE SÆT */}
- {workout.length > 0 && (
+ {/* OPTIMERET UI FOR AKTIVE SÆT */}
+{workout.length > 0 && (
   <div className="w-full max-w-3xl mt-6">
-    <h2 className="text-xl font-bold text-blue-300 mb-2">Aktiv Træning</h2>
-    <div className="overflow-x-auto rounded-lg border border-gray-700 w-full">
-      {Object.entries(
-        workout.reduce((acc, set) => {
-          acc[set.exercise] = acc[set.exercise] || [];
-          acc[set.exercise].push(set);
-          return acc;
-        }, {})
-      ).map(([exercise, sets]) => (
-        <div key={exercise} className="mb-4 p-4 bg-gray-800 rounded-lg shadow-md">
-          <h3 className="text-lg font-bold text-blue-400 flex justify-between items-center">
-            {exercise}
-            <a
-              href={`https://www.youtube.com/results?search_query=how+to+${encodeURIComponent(exercise)}`}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-red-500 hover:text-red-700 transition flex items-center"
+    <h2 className="text-2xl font-bold text-blue-400 mb-4">🏋️ Aktiv Træning</h2>
+
+    {Object.entries(
+      workout.reduce((acc, set) => {
+        acc[set.exercise] = acc[set.exercise] || [];
+        acc[set.exercise].push(set);
+        return acc;
+      }, {})
+    ).map(([exercise, sets]) => (
+      <div key={exercise} className="mb-4 p-4 bg-gray-800 rounded-xl shadow-lg border border-gray-700">
+        <h3 className="text-lg font-semibold text-blue-400 flex justify-between items-center">
+          {exercise}
+          <a
+            href={`https://www.youtube.com/results?search_query=how+to+${encodeURIComponent(exercise)}`}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="flex items-center gap-2 text-red-500 hover:text-red-700 transition"
+          >
+            <svg className="w-6 h-6 fill-current text-red-600 hover:text-red-700 transition" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512">
+              <path d="M549.7 124.1c-6.3-23.5-24.8-42-48.3-48.3C457.6 64 288 64 288 64s-169.6 0-213.4 11.8c-23.5 6.3-42 24.8-48.3 48.3C16 167.9 16 256 16 256s0 88.1 10.3 131.9c6.3 23.5 24.8 42 48.3 48.3C118.4 448 288 448 288 448s169.6 0 213.4-11.8c23.5-6.3 42-24.8 48.3-48.3C560 344.1 560 256 560 256s0-88.1-10.3-131.9zM232 336V176l144 80-144 80z"/>
+            </svg>
+          </a>
+        </h3>
+
+        {/* INDIVIDUELT SÆT MED SWIPE */}
+        {sets.map((item) => (
+          <motion.div
+            key={item.id}
+            className="relative flex justify-between items-center bg-gray-900 text-white px-4 py-3 rounded-lg border border-gray-700 mt-2 shadow-md"
+            initial={{ x: 0 }}
+            animate={{ x: confirmingSet === item.id || confirmingDelete === item.id ? 0 : undefined }}
+            exit={{ x: 0 }}
+            drag="x"
+            dragConstraints={{ left: -100, right: 100 }}
+            dragElastic={0.3}
+            onDrag={(event, info) => {
+              const element = event.target.closest(".relative");
+              if (info.offset.x > 50) {
+                element.style.backgroundColor = "#16a34a";
+                element.dataset.swipeText = "✅ Færdiggør";
+              } else if (info.offset.x < -50) {
+                element.style.backgroundColor = "#dc2626";
+                element.dataset.swipeText = "❌ Slet";
+              } else {
+                element.style.backgroundColor = "";
+                element.dataset.swipeText = "";
+              }
+            }}
+            onDragEnd={(event, info) => {
+              if (info.offset.x > 80) {
+                setConfirmingSet(item.id);
+              } else if (info.offset.x < -80) {
+                setConfirmingDelete(item.id);
+              } else {
+                event.target.style.transform = "translateX(0px)";
+              }
+            }}
+          >
+            {/* SÆT-INFO */}
+            <span className="text-center w-12">{item.set}</span>
+            
+            {/* REPS */}
+            <span 
+              className="text-center cursor-pointer hover:text-blue-400 transition"
+              onClick={() => {
+                setEditingSet(`${item.id}-reps`);
+                setTempValue(item.reps);
+              }}
             >
-              <svg className="w-6 h-6 fill-current text-red-600 hover:text-red-700 transition" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512">
-                <path d="M549.7 124.1c-6.3-23.5-24.8-42-48.3-48.3C457.6 64 288 64 288 64s-169.6 0-213.4 11.8c-23.5 6.3-42 24.8-48.3 48.3C16 167.9 16 256 16 256s0 88.1 10.3 131.9c6.3 23.5 24.8 42 48.3 48.3C118.4 448 288 448 288 448s169.6 0 213.4-11.8c23.5-6.3 42-24.8 48.3-48.3C560 344.1 560 256 560 256s0-88.1-10.3-131.9zM232 336V176l144 80-144 80z"/>
-              </svg>
-              <span className="hidden sm:inline ml-1">Instruks</span>
-            </a>
-          </h3>
+              {item.reps}
+            </span>
 
-          <table className="w-full mt-2 bg-gray-900 text-white rounded-lg shadow-lg">
-            <thead className="bg-blue-600 text-white">
-              <tr>
-                <th className="py-2 px-3 text-center">Sæt</th>
-                <th className="py-2 px-3 text-center">Reps</th>
-                <th className="py-2 px-3 text-center">Vægt</th>
-              </tr>
-            </thead>
-            <tbody>
-  {sets.map((item) => (
-    <>
-<motion.tr
-  key={item.id}
-  data-id={item.id}
-  className={`border-b border-gray-700 transition ${
-    confirmingSet === item.id ? "bg-green-500 text-white" : 
-    confirmingDelete === item.id ? "bg-red-500 text-white" : "bg-gray-800"
-  }`}
-  initial={{ x: 0 }}
-  animate={{ x: confirmingSet === item.id || confirmingDelete === item.id ? 0 : undefined }}
-  exit={{ x: 0 }}
-  drag="x"
-  dragConstraints={{ left: -100, right: 100 }}
-  dragElastic={0.3}
-  onDrag={(event, info) => {
-    if (info.offset.x > 50) {
-      setConfirmingSet(item.id);
-    } else if (info.offset.x < -50) {
-      setConfirmingDelete(item.id);
-    }
-  }}
-  onDragEnd={(event, info) => {
-    if (info.offset.x > 80) {
-      setConfirmingSet(item.id);
-    } else if (info.offset.x < -80) {
-      setConfirmingDelete(item.id);
-    } else {
-      setConfirmingSet(null);
-      setConfirmingDelete(null);
-    }
-  }}
->
+            {/* VÆGT */}
+            <span 
+              className="text-center cursor-pointer hover:text-blue-400 transition"
+              onClick={() => {
+                setEditingSet(`${item.id}-weight`);
+                setTempValue(item.weight);
+              }}
+            >
+              {typeof item.weight === "string" && item.weight.includes("kg") ? item.weight : `${item.weight} kg`}
+            </span>
+          </motion.div>
+        ))}
 
-  <td className="py-3 px-4 text-center">{item.set}</td>
+        {/* BEKRÆFT FÆRDIGGØRELSE */}
+        {confirmingSet === sets[0]?.id && (
+          <div className="bg-green-500 text-white text-center mt-2 p-2 rounded-lg">
+            ✅ Vil du færdiggøre denne øvelse?
+            <button
+              onClick={() => {
+                completeSet(sets[0].id);
+                setConfirmingSet(null);
+              }}
+              className="ml-4 px-4 py-2 bg-white text-green-700 rounded-lg"
+            >
+              Bekræft
+            </button>
+            <button
+              onClick={() => setConfirmingSet(null)}
+              className="ml-2 px-4 py-2 bg-gray-700 text-white rounded-lg"
+            >
+              Annuller
+            </button>
+          </div>
+        )}
 
-  <td className="py-3 px-4 text-center">
-    {editingSet === `${item.id}-reps` ? (
-      <motion.input
-        initial={{ scale: 0.8, opacity: 0 }}
-        animate={{ scale: 1, opacity: 1 }}
-        exit={{ scale: 0.8, opacity: 0 }}
-        type="number"
-        className="w-16 p-1 bg-gray-700 text-white text-center rounded-md border border-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-400"
-        value={tempValue}
-        autoFocus
-        onChange={(e) => setTempValue(e.target.value)}
-        onBlur={() => handleEdit(item.id, "reps", tempValue)}
-        onKeyDown={(e) => e.key === "Enter" && handleEdit(item.id, "reps", tempValue)}
-      />
-    ) : (
-      <span
-        onClick={() => {
-          setEditingSet(`${item.id}-reps`);
-          setTempValue(item.reps);
-        }}
-        className="cursor-pointer hover:text-blue-400 transition"
-      >
-        {item.reps}
-      </span>
-    )}
-  </td>
-
-  <td className="py-3 px-4 text-center">
-    {editingSet === `${item.id}-weight` ? (
-      <motion.input
-        initial={{ scale: 0.8, opacity: 0 }}
-        animate={{ scale: 1, opacity: 1 }}
-        exit={{ scale: 0.8, opacity: 0 }}
-        type="number"
-        className="w-16 p-1 bg-gray-700 text-white text-center rounded-md border border-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-400"
-        value={tempValue}
-        autoFocus
-        onChange={(e) => setTempValue(e.target.value)}
-        onBlur={() => handleEdit(item.id, "weight", tempValue)}
-        onKeyDown={(e) => e.key === "Enter" && handleEdit(item.id, "weight", tempValue)}
-      />
-    ) : (
-      <span
-        onClick={() => {
-          setEditingSet(`${item.id}-weight`);
-          setTempValue(item.weight);
-        }}
-        className="cursor-pointer hover:text-blue-400 transition"
-      >
-        {typeof item.weight === "string" && item.weight.includes("kg") ? item.weight : `${item.weight} kg`}
-      </span>
-    )}
-  </td>
-
-</motion.tr>
-
-{/* BEKRÆFTELSESRÆKKER */}
-{confirmingSet === item.id && (
-  <tr className="bg-green-500 text-white">
-    <td colSpan="3" className="py-2 px-4 text-center">
-      ✅ Vil du færdiggøre dette sæt?
-      <button 
-        onClick={() => {
-          completeSet(item.id);
-          setConfirmingSet(null);
-        }}
-        className="ml-4 px-4 py-2 bg-white text-green-700 rounded-lg"
-      >
-        Bekræft
-      </button>
-      <button 
-        onClick={() => {
-          setConfirmingSet(null);
-        }}
-        className="ml-2 px-4 py-2 bg-gray-700 text-white rounded-lg"
-      >
-        Annuller
-      </button>
-    </td>
-  </tr>
-)}
-
-{confirmingDelete === item.id && (
-  <tr className="bg-red-500 text-white">
-    <td colSpan="3" className="py-2 px-4 text-center">
-      ❌ Vil du slette dette sæt?
-      <button
-        onClick={() => {
-          removeSet(item.id);
-          setConfirmingDelete(null);
-        }}
-        className="ml-4 px-4 py-2 bg-white text-red-700 rounded-lg"
-      >
-        Bekræft
-      </button>
-      <button
-        onClick={() => {
-          setConfirmingDelete(null);
-        }}
-        className="ml-2 px-4 py-2 bg-gray-700 text-white rounded-lg"
-      >
-        Annuller
-      </button>
-    </td>
-  </tr>
-)}
-
-    </>
-  ))}
-</tbody>
-
-          </table>
-        </div>
-      ))}
-    </div>
+        {/* BEKRÆFT SLETNING */}
+        {confirmingDelete === sets[0]?.id && (
+          <div className="bg-red-500 text-white text-center mt-2 p-2 rounded-lg">
+            ❌ Vil du slette denne øvelse?
+            <button
+              onClick={() => {
+                removeSet(sets[0].id);
+                setConfirmingDelete(null);
+              }}
+              className="ml-4 px-4 py-2 bg-white text-red-700 rounded-lg"
+            >
+              Bekræft
+            </button>
+            <button
+              onClick={() => setConfirmingDelete(null)}
+              className="ml-2 px-4 py-2 bg-gray-700 text-white rounded-lg"
+            >
+              Annuller
+            </button>
+          </div>
+        )}
+      </div>
+    ))}
   </div>
 )}
+
+
+ 
 {/* TABELLEN - FÆRDIGGJORTE SÆT */}
 {completedSets.length > 0 && (
   <div className="w-full max-w-3xl mt-6 overflow-x-auto">
