@@ -195,6 +195,30 @@ export default function WorkoutPage({
           ))}
         </div>
       )}
+ {completedSets.length > 0 && (
+        <div className="w-full max-w-3xl mt-6">
+          <h2 className="text-xl font-bold text-green-300 mb-2">✅ Færdiggjorte Sæt</h2>
+          <table className="w-full bg-gray-800 text-white rounded-lg">
+            <thead className="bg-green-600 text-white">
+              <tr>
+                <th className="py-2 px-3 text-center">Sæt</th>
+                <th className="py-2 px-3 text-center">Reps</th>
+                <th className="py-2 px-3 text-center">Vægt</th>
+              </tr>
+            </thead>
+            <tbody>
+              {completedSets.map((set) => (
+                <tr key={set.id} className="border-b border-gray-700 hover:bg-gray-700 transition">
+                  <td className="py-3 px-4 text-center">{set.set}</td>
+                  <td className="py-3 px-4 text-center">{set.reps}</td>
+                  <td className="py-3 px-4 text-center">{set.weight} kg</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      )}
+
     </div>
   );
 }
