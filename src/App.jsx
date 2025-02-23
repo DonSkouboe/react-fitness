@@ -344,100 +344,98 @@ const fallbackCopyTextToClipboard = (text) => {
             <tbody>
   {sets.map((item) => (
     <>
-      <motion.tr
-      key={item.id}
-      data-id={item.id} // <-- Tilføjet så vi kan finde rækken senere
-      className="border-b border-gray-700 transition"
-      initial={{ x: 0 }}
-      animate={{ x: confirmingSet === item.id || confirmingDelete === item.id ? 0 : undefined }}
-      exit={{ x: 0 }}
-      drag="x"
-      dragConstraints={{ left: -100, right: 100 }}
-      dragElastic={0.3}
-      onDrag={(event, info) => {
-        const element = event.target.closest("tr");
-        if (info.offset.x > 50) {
-          element.style.backgroundColor = "#16a34a";
-          element.dataset.swipeText = "✅ Færdiggør sæt";
-        } else if (info.offset.x < -50) {
-          element.style.backgroundColor = "#dc2626";
-          element.dataset.swipeText = "❌ Slet sæt";
-        } else {
-          element.style.backgroundColor = "";
-          element.dataset.swipeText = "";
-        }
-      }}
-      onDragEnd={(event, info) => {
-        if (info.offset.x > 80) {
-          setConfirmingSet(item.id); // Bekræft færdiggørelse
-        } else if (info.offset.x < -80) {
-          setConfirmingDelete(item.id); // Bekræft sletning
-        } else {
-          event.target.style.transform = "translateX(0px)"; // Returner til midten
-        }
-      }}
-    >
+<motion.tr
+  key={item.id}
+  data-id={item.id}
+  className={`border-b border-gray-700 transition ${
+    confirmingSet === item.id ? "bg-green-500 text-white" : 
+    confirmingDelete === item.id ? "bg-red-500 text-white" : "bg-gray-800"
+  }`}
+  initial={{ x: 0 }}
+  animate={{ x: confirmingSet === item.id || confirmingDelete === item.id ? 0 : undefined }}
+  exit={{ x: 0 }}
+  drag="x"
+  dragConstraints={{ left: -100, right: 100 }}
+  dragElastic={0.3}
+  onDrag={(event, info) => {
+    if (info.offset.x > 50) {
+      setConfirmingSet(item.id);
+    } else if (info.offset.x < -50) {
+      setConfirmingDelete(item.id);
+    }
+  }}
+  onDragEnd={(event, info) => {
+    if (info.offset.x > 80) {
+      setConfirmingSet(item.id);
+    } else if (info.offset.x < -80) {
+      setConfirmingDelete(item.id);
+    } else {
+      setConfirmingSet(null);
+      setConfirmingDelete(null);
+    }
+  }}
+>
 
-        <td className="py-3 px-4 text-center">{item.set}</td>
-        <td className="py-3 px-4 text-center">
-  {editingSet === `${item.id}-reps` ? (
-    <motion.input
-      initial={{ scale: 0.8, opacity: 0 }}
-      animate={{ scale: 1, opacity: 1 }}
-      exit={{ scale: 0.8, opacity: 0 }}
-      type="number"
-      className="w-16 p-1 bg-gray-700 text-white text-center rounded-md border border-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-400"
-      value={tempValue}
-      autoFocus
-      onChange={(e) => setTempValue(e.target.value)}
-      onBlur={() => handleEdit(item.id, "reps", tempValue)}
-      onKeyDown={(e) => e.key === "Enter" && handleEdit(item.id, "reps", tempValue)}
-    />
-  ) : (
-    <span
-      onClick={() => {
-        setEditingSet(`${item.id}-reps`);
-        setTempValue(item.reps);
-      }}
-      className="cursor-pointer hover:text-blue-400 transition"
-    >
-      {item.reps}
-    </span>
-  )}
-</td>
+  <td className="py-3 px-4 text-center">{item.set}</td>
 
-<td className="py-3 px-4 text-center">
-  {editingSet === `${item.id}-weight` ? (
-    <motion.input
-      initial={{ scale: 0.8, opacity: 0 }}
-      animate={{ scale: 1, opacity: 1 }}
-      exit={{ scale: 0.8, opacity: 0 }}
-      type="number"
-      className="w-16 p-1 bg-gray-700 text-white text-center rounded-md border border-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-400"
-      value={tempValue}
-      autoFocus
-      onChange={(e) => setTempValue(e.target.value)}
-      onBlur={() => handleEdit(item.id, "weight", tempValue)}
-      onKeyDown={(e) => e.key === "Enter" && handleEdit(item.id, "weight", tempValue)}
-    />
-  ) : (
-    <span
-      onClick={() => {
-        setEditingSet(`${item.id}-weight`);
-        setTempValue(item.weight);
-      }}
-      className="cursor-pointer hover:text-blue-400 transition"
-    >
-      {typeof item.weight === "string" && item.weight.includes("kg") ? item.weight : `${item.weight} kg`}
-    </span>
-  )}
-</td>
+  <td className="py-3 px-4 text-center">
+    {editingSet === `${item.id}-reps` ? (
+      <motion.input
+        initial={{ scale: 0.8, opacity: 0 }}
+        animate={{ scale: 1, opacity: 1 }}
+        exit={{ scale: 0.8, opacity: 0 }}
+        type="number"
+        className="w-16 p-1 bg-gray-700 text-white text-center rounded-md border border-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-400"
+        value={tempValue}
+        autoFocus
+        onChange={(e) => setTempValue(e.target.value)}
+        onBlur={() => handleEdit(item.id, "reps", tempValue)}
+        onKeyDown={(e) => e.key === "Enter" && handleEdit(item.id, "reps", tempValue)}
+      />
+    ) : (
+      <span
+        onClick={() => {
+          setEditingSet(`${item.id}-reps`);
+          setTempValue(item.reps);
+        }}
+        className="cursor-pointer hover:text-blue-400 transition"
+      >
+        {item.reps}
+      </span>
+    )}
+  </td>
 
+  <td className="py-3 px-4 text-center">
+    {editingSet === `${item.id}-weight` ? (
+      <motion.input
+        initial={{ scale: 0.8, opacity: 0 }}
+        animate={{ scale: 1, opacity: 1 }}
+        exit={{ scale: 0.8, opacity: 0 }}
+        type="number"
+        className="w-16 p-1 bg-gray-700 text-white text-center rounded-md border border-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-400"
+        value={tempValue}
+        autoFocus
+        onChange={(e) => setTempValue(e.target.value)}
+        onBlur={() => handleEdit(item.id, "weight", tempValue)}
+        onKeyDown={(e) => e.key === "Enter" && handleEdit(item.id, "weight", tempValue)}
+      />
+    ) : (
+      <span
+        onClick={() => {
+          setEditingSet(`${item.id}-weight`);
+          setTempValue(item.weight);
+        }}
+        className="cursor-pointer hover:text-blue-400 transition"
+      >
+        {typeof item.weight === "string" && item.weight.includes("kg") ? item.weight : `${item.weight} kg`}
+      </span>
+    )}
+  </td>
 
-      </motion.tr>
+</motion.tr>
 
-      {/* BEKRÆFTELSESRÆKKER */}
-      {confirmingSet === item.id && (
+{/* BEKRÆFTELSESRÆKKER */}
+{confirmingSet === item.id && (
   <tr className="bg-green-500 text-white">
     <td colSpan="3" className="py-2 px-4 text-center">
       ✅ Vil du færdiggøre dette sæt?
@@ -453,33 +451,6 @@ const fallbackCopyTextToClipboard = (text) => {
       <button 
         onClick={() => {
           setConfirmingSet(null);
-          document.getElementById(`set-${item.id}`).style.backgroundColor = ""; // Reset farve
-        }}
-        className="ml-2 px-4 py-2 bg-gray-700 text-white rounded-lg"
-      >
-        Annuller
-      </button>
-    </td>
-  </tr>
-)}
-
-{/* BEKRÆFTELSESRÆKKER */}
-{confirmingSet === item.id && (
-  <tr>
-    <td colSpan="3" className="py-2 px-4 text-center bg-green-500 text-white">
-      ✅ Vil du færdiggøre dette sæt?
-      <button
-        onClick={() => {
-          completeSet(item.id);
-          setConfirmingSet(null);
-        }}
-        className="ml-4 px-4 py-2 bg-white text-green-700 rounded-lg"
-      >
-        Bekræft
-      </button>
-      <button
-        onClick={() => {
-          setConfirmingSet(null);
         }}
         className="ml-2 px-4 py-2 bg-gray-700 text-white rounded-lg"
       >
@@ -490,8 +461,8 @@ const fallbackCopyTextToClipboard = (text) => {
 )}
 
 {confirmingDelete === item.id && (
-  <tr>
-    <td colSpan="3" className="py-2 px-4 text-center bg-red-500 text-white">
+  <tr className="bg-red-500 text-white">
+    <td colSpan="3" className="py-2 px-4 text-center">
       ❌ Vil du slette dette sæt?
       <button
         onClick={() => {
@@ -513,6 +484,7 @@ const fallbackCopyTextToClipboard = (text) => {
     </td>
   </tr>
 )}
+
     </>
   ))}
 </tbody>
