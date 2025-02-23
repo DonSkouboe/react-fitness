@@ -342,52 +342,53 @@ const fallbackCopyTextToClipboard = (text) => {
         {/* INDIVIDUELLE SÆT MED SWIPE */}
         {sets.map((item) => (
           <motion.div
-  key={item.id}
-  className="relative flex justify-between items-center bg-gray-900 text-white px-4 py-3 rounded-lg border border-gray-700 mt-2 shadow-md"
-  initial={{ x: 0 }}
-  animate={{
-    x: confirmingSet === item.id || confirmingDelete === item.id ? 0 : undefined,
-    backgroundColor: confirmingSet === item.id 
-      ? "#16a34a" 
-      : confirmingDelete === item.id 
-      ? "#dc2626" 
-      : "#1f2937",
-  }}
-  exit={{ x: 0 }}
-  drag="x"
-  dragConstraints={{ left: -100, right: 100 }}
-  dragElastic={0.3}
-  onDrag={(event, info) => {
-    const element = event.target.closest(".relative");
-
-    if (info.offset.x > 50) {
-      element.style.backgroundColor = "#16a34a";
-      element.dataset.swipeText = "✅ Færdiggør";
-    } else if (info.offset.x < -50) {
-      element.style.backgroundColor = "#dc2626";
-      element.dataset.swipeText = "❌ Slet";
-    } else {
-      element.style.backgroundColor = "#1f2937";
-      element.dataset.swipeText = "";
-    }
-  }}
-  onDragEnd={(event, info) => {
-    if (info.offset.x > 80) {
-      setConfirmingSet(item.id);
-      setConfirmingDelete(null); // Sikrer, at kun én bekræftelse vises
-    } else if (info.offset.x < -80) {
-      setConfirmingDelete(item.id);
-      setConfirmingSet(null); // Sikrer, at kun én bekræftelse vises
-    } else {
-      // 🔥 **RESET SWIPE, hvis brugeren ikke swiper langt nok!**
-      event.target.style.transition = "transform 0.3s ease-out";
-      event.target.style.transform = "translateX(0px)";
-      setTimeout(() => {
-        event.target.style.transition = "";
-      }, 300);
-    }
-  }}
->
+          key={item.id}
+          className="relative flex justify-between items-center bg-gray-900 text-white px-4 py-3 rounded-lg border border-gray-700 mt-2 shadow-md"
+          initial={{ x: 0 }}
+          animate={{
+            x: confirmingSet === item.id || confirmingDelete === item.id ? 0 : undefined,
+            backgroundColor: confirmingSet === item.id 
+              ? "#16a34a" 
+              : confirmingDelete === item.id 
+              ? "#dc2626" 
+              : "#1f2937",
+          }}
+          exit={{ x: 0 }}
+          drag="x"
+          dragConstraints={{ left: -100, right: 100 }}
+          dragElastic={0.3}
+          onDrag={(event, info) => {
+            const element = event.target.closest(".relative");
+        
+            if (info.offset.x > 50) {
+              element.style.backgroundColor = "#16a34a";
+              element.dataset.swipeText = "✅ Færdiggør";
+            } else if (info.offset.x < -50) {
+              element.style.backgroundColor = "#dc2626";
+              element.dataset.swipeText = "❌ Slet";
+            } else {
+              element.style.backgroundColor = "#1f2937";
+              element.dataset.swipeText = "";
+            }
+          }}
+          onDragEnd={(event, info) => {
+            if (info.offset.x > 80) {
+              setConfirmingSet(item.id);
+              setConfirmingDelete(null); // Sikrer, at kun én bekræftelse vises
+            } else if (info.offset.x < -80) {
+              setConfirmingDelete(item.id);
+              setConfirmingSet(null); // Sikrer, at kun én bekræftelse vises
+            } else {
+              // 🔥 **RESET SWIPE, hvis brugeren ikke swiper langt nok!**
+              event.target.style.transition = "transform 0.3s ease-out";
+              event.target.style.transform = "translateX(0px)";
+              setTimeout(() => {
+                event.target.style.transition = "";
+              }, 300);
+            }
+          }}
+        >
+        
 
 
      
