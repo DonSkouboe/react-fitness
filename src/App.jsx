@@ -7,6 +7,8 @@ export default function App() {
   const [workout, setWorkout] = useState([]);
   const [completedSets, setCompletedSets] = useState([]);
   const [input, setInput] = useState("");
+  const [confirmingSet, setConfirmingSet] = useState(null);
+  const [confirmingDelete, setConfirmingDelete] = useState(null);
 
   const processWorkout = () => {
     if (!input.trim()) {
@@ -327,54 +329,83 @@ const fallbackCopyTextToClipboard = (text) => {
             <tbody>
   {workout.map((item) => (
     <motion.tr
-      key={item.id}
-      className="border-b border-gray-700 transition"
-      initial={{ x: 0 }}
-      animate={{ x: 0 }}
-      exit={{ x: 0 }}
-      drag="x"
-      dragConstraints={{ left: -100, right: 100 }}
-      dragElastic={0.5}
-      onDragEnd={(event, info) => {
-        if (info.offset.x > 80) {
-          // Swipe højre = afslut sæt
-          setTimeout(() => completeSet(item.id), 200);
-        }
-        if (info.offset.x < -80) {
-          // Swipe venstre = slet sæt
-          setTimeout(() => removeSet(item.id), 200);
-        }
-      }}
-    >
-      <td className="py-3 px-4 flex items-center">
-        {item.exercise}
-        <a
-          href={`https://www.youtube.com/results?search_query=how+to+${encodeURIComponent(item.exercise)}`}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="ml-2 text-red-500 hover:text-red-700 transition"
-        >
-          🎥
-        </a>
+    key={item.id}
+    className="border-b border-gray-700 transition relative"
+    initial={{ x: 0 }}
+    animate={{ x: 0 }}
+    exit={{ x: 0 }}
+    drag="x"
+    dragConstraints={{ left: -100, right: 100 }}
+    dragElastic={0.3}
+    onDrag={(event, info) => {
+      // 🎨 Ændrer baggrund farve baseret på swipe-retning
+      const element = event.target.closest("tr");
+      if (info.offset.x > 50) {
+        element.style.backgroundColor = "#16a34a"; // Grøn (Afslut)
+      } else if (info.offset.x < -50) {
+        element.style.backgroundColor = "#dc2626"; // Rød (Slet)
+      } else {
+        element.style.backgroundColor = ""; // Normal baggrund
+      }
+    }}
+    onDragEnd={(event, info) => {
+      const element = event.target.closest("tr");
+  
+      if (info.offset.x > 80) {
+        // **Swipe højre - vis bekræftelsesknap**
+        setConfirmingSet(item.id);
+        element.style.backgroundColor = "#16a34a";
+      } else if (info.offset.x < -80) {
+        // **Swipe venstre - vis bekræftelsesknap**
+        setConfirmingDelete(item.id);
+        element.style.backgroundColor = "#dc2626";
+      } else {
+        // **Reset hvis swipe ikke er langt nok**
+        element.style.backgroundColor = "";
+      }
+    }}
+  >
+    <td className="py-3 px-4 text-center">{item.set}</td>
+  
+    {/* 🔢 Input for reps */}
+    <td className="py-3 px-4 text-center">
+      <input
+        type="number"
+        className="w-16 p-1 bg-gray-700 text-white text-center rounded-md border border-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-400"
+        value={item.reps > 0 ? item.reps : ""}
+        onChange={(e) => updateSet(item.id, "reps", e.target.value)}
+      />
+    </td>
+  
+    {/* ⚖️ Input for vægt */}
+    <td className="py-3 px-4 text-center">
+      <input
+        type="number"
+        className="w-16 p-1 bg-gray-700 text-white text-center rounded-md border border-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-400"
+        value={item.weight > 0 ? item.weight : ""}
+        onChange={(e) => updateSet(item.id, "weight", e.target.value)}
+      />
+    </td>
+  
+    {/* ✅ Bekræft afslut */}
+    {confirmingSet === item.id && (
+      <td className="absolute right-3 bg-green-500 text-white px-4 py-2 rounded-md shadow-md">
+        <button onClick={() => { completeSet(item.id); setConfirmingSet(null); }}>
+          ✅ Bekræft
+        </button>
       </td>
-      <td className="py-3 px-4 text-center">{item.set}</td>
-      <td className="py-3 px-4 text-center">
-        <input
-          type="number"
-          className="w-16 p-1 bg-gray-700 text-white text-center rounded-md border border-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-400"
-          value={item.reps > 0 ? item.reps : ""}
-          onChange={(e) => updateSet(item.id, "reps", e.target.value)}
-        />
+    )}
+  
+    {/* ❌ Bekræft slet */}
+    {confirmingDelete === item.id && (
+      <td className="absolute right-3 bg-red-500 text-white px-4 py-2 rounded-md shadow-md">
+        <button onClick={() => { removeSet(item.id); setConfirmingDelete(null); }}>
+          ❌ Bekræft
+        </button>
       </td>
-      <td className="py-3 px-4 text-center">
-        <input
-          type="number"
-          className="w-16 p-1 bg-gray-700 text-white text-center rounded-md border border-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-400"
-          value={item.weight > 0 ? item.weight : ""}
-          onChange={(e) => updateSet(item.id, "weight", e.target.value)}
-        />
-      </td>
-    </motion.tr>
+    )}
+  </motion.tr>
+  
   ))}
 </tbody>
           </table>
