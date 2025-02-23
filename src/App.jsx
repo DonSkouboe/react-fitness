@@ -298,9 +298,6 @@ const fallbackCopyTextToClipboard = (text) => {
             <th className="py-3 px-4 text-center">Sæt</th>
             <th className="py-3 px-4 text-center">Reps</th>
             <th className="py-3 px-4 text-center">Vægt</th>
-            <th className="py-3 px-4 text-center">Volume</th>
-            <th className="py-3 px-4 text-center">Instruks</th>
-            <th className="py-3 px-4 text-center">✔️</th>
           </tr>
         </thead>
         <tbody>
