@@ -287,10 +287,10 @@ const fallbackCopyTextToClipboard = (text) => {
       </button>
 
  {/* TABELLEN - VISER AKTIVE SÆT */}
- {workout.length > 0 && (
+{workout.length > 0 && (
   <div className="w-full max-w-3xl mt-6">
     <h2 className="text-xl font-bold text-blue-300 mb-2">Aktiv Træning</h2>
-    <div className="overflow-x-auto rounded-lg border border-gray-700">
+    <div className="overflow-x-auto rounded-lg border border-gray-700 w-full max-w-[90vw]">
       <table className="w-full min-w-[750px] bg-gray-800 text-white shadow-lg">
         <thead className="bg-blue-600 text-white">
           <tr>
@@ -301,39 +301,78 @@ const fallbackCopyTextToClipboard = (text) => {
           </tr>
         </thead>
         <tbody>
-          {workout.map((item) => (
-            <tr key={item.id} className="border-b border-gray-700 hover:bg-gray-700 transition">
-              <td className="py-3 px-4">{item.exercise}</td>
-              <td className="py-3 px-4 text-center">{item.set}</td>
-              <td className="py-3 px-4 text-center">
-                <input
-                  type="number"
-                  className="w-16 p-1 bg-gray-700 text-white text-center rounded-md border border-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-400"
-                  value={item.reps}
-                  onChange={(e) => updateSet(item.id, "reps", e.target.value)}
-                />
-              </td>
-              <td className="py-3 px-4 text-center">
-                <input
-                  type="number"
-                  className="w-16 p-1 bg-gray-700 text-white text-center rounded-md border border-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-400"
-                  value={item.weight}
-                  onChange={(e) => updateSet(item.id, "weight", e.target.value)}
-                />
-              </td>
-            </tr>
-          ))}
-        </tbody>
+  {workout.map((item) => (
+    <tr
+      key={item.id}
+      className="relative border-b border-gray-700 bg-gray-800 transition-transform duration-300 ease-in-out"
+      onTouchStart={(e) => e.currentTarget.dataset.startX = e.touches[0].clientX}
+      onTouchMove={(e) => {
+        const diff = e.touches[0].clientX - e.currentTarget.dataset.startX;
+        if (diff > 50) {
+          e.currentTarget.style.transform = `translateX(${Math.min(diff, 100)}px)`;
+        }
+        if (diff < -50) {
+          e.currentTarget.style.transform = `translateX(${Math.max(diff, -100)}px)`;
+        }
+      }}
+      onTouchEnd={(e) => {
+        const diff = e.changedTouches[0].clientX - e.currentTarget.dataset.startX;
+        if (diff > 75) {
+          if (window.confirm("✅ Vil du afslutte dette sæt?")) {
+            completeSet(item.id);
+          }
+        } else if (diff < -75) {
+          if (window.confirm("❌ Vil du slette dette sæt?")) {
+            removeSet(item.id);
+          }
+        }
+        e.currentTarget.style.transform = "translateX(0px)"; // Reset position
+      }}
+    >
+      {/* Baggrund for swipe (vises bagved) */}
+      <td colSpan="4" className="absolute inset-0 flex items-center justify-between px-4 opacity-70">
+        <span className="text-green-500 font-bold text-lg">✅ Afslut</span>
+        <span className="text-red-500 font-bold text-lg">❌ Slet</span>
+      </td>
+
+      {/* Forgrundsindhold (hovedtabel) */}
+      <td className="relative py-3 px-4 flex items-center bg-gray-800">
+        {item.exercise}
+        <a
+          href={`https://www.youtube.com/results?search_query=how+to+${encodeURIComponent(item.exercise)}`}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="ml-2 text-red-500 hover:text-red-700 transition"
+        >
+          🎥
+        </a>
+      </td>
+      <td className="relative py-3 px-4 text-center bg-gray-800">{item.set}</td>
+      <td className="relative py-3 px-4 text-center bg-gray-800">
+        <input
+          type="number"
+          className="w-16 p-1 bg-gray-700 text-white text-center rounded-md border border-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-400"
+          value={item.reps > 0 ? item.reps : ""}
+          onChange={(e) => updateSet(item.id, "reps", e.target.value)}
+        />
+      </td>
+      <td className="relative py-3 px-4 text-center bg-gray-800">
+        <input
+          type="number"
+          className="w-16 p-1 bg-gray-700 text-white text-center rounded-md border border-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-400"
+          value={item.weight > 0 ? item.weight : ""}
+          onChange={(e) => updateSet(item.id, "weight", e.target.value)}
+        />
+      </td>
+    </tr>
+  ))}
+</tbody>
+
+
       </table>
     </div>
-
-    {/* Samlet Volume under tabellen */}
-    <h3 className="text-xl font-bold text-green-400 mt-4 text-center">
-      🔥 Samlet Volume: {totalVolume} kg
-    </h3>
   </div>
 )}
-
 
 
 
