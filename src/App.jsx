@@ -345,8 +345,13 @@ const fallbackCopyTextToClipboard = (text) => {
   key={item.id}
   className="relative flex justify-between items-center bg-gray-900 text-white px-4 py-3 rounded-lg border border-gray-700 mt-2 shadow-md"
   initial={{ x: 0 }}
-  animate={{ 
-    x: confirmingSet === item.id || confirmingDelete === item.id ? 0 : undefined
+  animate={{
+    x: confirmingSet === item.id || confirmingDelete === item.id ? 0 : undefined,
+    backgroundColor: confirmingSet === item.id 
+      ? "#16a34a" 
+      : confirmingDelete === item.id 
+      ? "#dc2626" 
+      : "#1f2937",
   }}
   exit={{ x: 0 }}
   drag="x"
@@ -362,7 +367,7 @@ const fallbackCopyTextToClipboard = (text) => {
       element.style.backgroundColor = "#dc2626";
       element.dataset.swipeText = "❌ Slet";
     } else {
-      element.style.backgroundColor = "";
+      element.style.backgroundColor = "#1f2937";
       element.dataset.swipeText = "";
     }
   }}
@@ -374,10 +379,10 @@ const fallbackCopyTextToClipboard = (text) => {
     } else if (info.offset.x < -80) {
       setConfirmingDelete(item.id);
     } else {
-      // 🔹 Resetter position + baggrundsfarve ved utilstrækkeligt swipe
+      // **🔹 Glider smooth tilbage og resetter farve**
       element.style.transition = "transform 0.3s ease-out, background-color 0.3s ease-out";
       element.style.transform = "translateX(0px)";
-      element.style.backgroundColor = ""; 
+      element.style.backgroundColor = "#1f2937"; 
       element.dataset.swipeText = "";
     }
   }}
