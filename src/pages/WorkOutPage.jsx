@@ -1,4 +1,6 @@
+import { useState } from "react";
 import { motion } from "motion/react";
+import { FaYoutube } from "tw-elements-react"; // YouTube ikon fra tw-elements
 
 export default function WorkoutPage({
   workout,
@@ -10,6 +12,20 @@ export default function WorkoutPage({
   completeSet,
   removeSet
 }) {
+  const [confirmingSet, setConfirmingSet] = useState(null);
+  const [confirmingDelete, setConfirmingDelete] = useState(null);
+  const [editingSet, setEditingSet] = useState(null);
+  const [tempValue, setTempValue] = useState("");
+
+  const handleEdit = (setId, field, value) => {
+    setWorkout((prevWorkout) =>
+      prevWorkout.map((set) =>
+        set.id === setId ? { ...set, [field]: parseInt(value) || 0 } : set
+      )
+    );
+    setEditingSet(null); // Luk inputfeltet
+  };
+
   return (
     <div className="min-h-screen flex flex-col items-center justify-center bg-gray-900 text-white p-6">
       <h2 className="text-4xl font-bold text-blue-400 mb-6">🏋️ Træning</h2>
@@ -49,9 +65,9 @@ export default function WorkoutPage({
                   href={`https://www.youtube.com/results?search_query=how+to+${encodeURIComponent(exercise)}`}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="flex items-center gap-2 text-red-500 hover:text-red-700 transition"
+                  className="text-red-500 hover:text-red-700 transition"
                 >
-                  🎥
+                  <FaYoutube size={24} />
                 </a>
               </h3>
 
@@ -72,31 +88,108 @@ export default function WorkoutPage({
                   dragElastic={0.3}
                   onDragEnd={(event, info) => {
                     if (info.offset.x > 80) {
-                      completeSet(item.id);
+                      setConfirmingSet(item.id);
+                      setConfirmingDelete(null);
                     } else if (info.offset.x < -80) {
-                      removeSet(item.id);
+                      setConfirmingDelete(item.id);
+                      setConfirmingSet(null);
                     }
                   }}
                 >
                   <span className="text-center w-12">{item.set}</span>
-                  <span className="text-center">{item.reps}</span>
-                  <span className="text-center">{item.weight}</span>
+                  
+                  {/* REPS (Redigerbar) */}
+                  {editingSet === `${item.id}-reps` ? (
+                    <input
+                      type="number"
+                      className="w-16 bg-gray-700 text-white text-center rounded-md border border-gray-500"
+                      value={tempValue}
+                      autoFocus
+                      onChange={(e) => setTempValue(e.target.value)}
+                      onBlur={() => handleEdit(item.id, "reps", tempValue)}
+                      onKeyDown={(e) => e.key === "Enter" && handleEdit(item.id, "reps", tempValue)}
+                    />
+                  ) : (
+                    <span 
+                      className="text-center cursor-pointer hover:text-blue-400 transition"
+                      onClick={() => {
+                        setEditingSet(`${item.id}-reps`);
+                        setTempValue(item.reps);
+                      }}
+                    >
+                      {item.reps}
+                    </span>
+                  )}
+
+                  {/* VÆGT (Redigerbar) */}
+                  {editingSet === `${item.id}-weight` ? (
+                    <input
+                      type="number"
+                      className="w-16 bg-gray-700 text-white text-center rounded-md border border-gray-500"
+                      value={tempValue}
+                      autoFocus
+                      onChange={(e) => setTempValue(e.target.value)}
+                      onBlur={() => handleEdit(item.id, "weight", tempValue)}
+                      onKeyDown={(e) => e.key === "Enter" && handleEdit(item.id, "weight", tempValue)}
+                    />
+                  ) : (
+                    <span 
+                      className="text-center cursor-pointer hover:text-blue-400 transition"
+                      onClick={() => {
+                        setEditingSet(`${item.id}-weight`);
+                        setTempValue(item.weight);
+                      }}
+                    >
+                      {item.weight} kg
+                    </span>
+                  )}
                 </motion.div>
               ))}
-            </div>
-          ))}
-        </div>
-      )}
 
-      {/* FÆRDIGGJORTE SÆT */}
-      {completedSets.length > 0 && (
-        <div className="w-full max-w-3xl mt-6">
-          <h2 className="text-xl font-bold text-green-300 mb-2">✅ Færdiggjorte Sæt</h2>
-          
-          {completedSets.map((set) => (
-            <p key={set.id} className="text-green-400">
-              {set.exercise} - {set.reps} reps @ {set.weight}
-            </p>
+              {/* BEKRÆFT FÆRDIGGØRELSE */}
+              {confirmingSet === sets[0]?.id && (
+                <div className="bg-green-500 text-white text-center mt-2 p-2 rounded-lg">
+                  ✅ Vil du færdiggøre denne øvelse?
+                  <button
+                    onClick={() => {
+                      completeSet(sets[0].id);
+                      setConfirmingSet(null);
+                    }}
+                    className="ml-4 px-4 py-2 bg-white text-green-700 rounded-lg"
+                  >
+                    Bekræft
+                  </button>
+                  <button
+                    onClick={() => setConfirmingSet(null)}
+                    className="ml-2 px-4 py-2 bg-gray-700 text-white rounded-lg"
+                  >
+                    Annuller
+                  </button>
+                </div>
+              )}
+
+              {/* BEKRÆFT SLETNING */}
+              {confirmingDelete === sets[0]?.id && (
+                <div className="bg-red-500 text-white text-center mt-2 p-2 rounded-lg">
+                  ❌ Vil du slette denne øvelse?
+                  <button
+                    onClick={() => {
+                      removeSet(sets[0].id);
+                      setConfirmingDelete(null);
+                    }}
+                    className="ml-4 px-4 py-2 bg-white text-red-700 rounded-lg"
+                  >
+                    Bekræft
+                  </button>
+                  <button
+                    onClick={() => setConfirmingDelete(null)}
+                    className="ml-2 px-4 py-2 bg-gray-700 text-white rounded-lg"
+                  >
+                    Annuller
+                  </button>
+                </div>
+              )}
+            </div>
           ))}
         </div>
       )}
