@@ -329,35 +329,39 @@ const fallbackCopyTextToClipboard = (text) => {
   {sets.map((item) => (
     <>
       <motion.tr
-        key={item.id}
-        className="border-b border-gray-700 transition"
-        initial={{ x: 0 }}
-        animate={{ x: 0 }}
-        exit={{ x: 0 }}
-        drag="x"
-        dragConstraints={{ left: -100, right: 100 }}
-        dragElastic={0.3}
-        onDrag={(event, info) => {
-          const element = event.target.closest("tr");
-          if (info.offset.x > 50) {
-            element.style.backgroundColor = "#16a34a";
-            element.dataset.swipeText = "✅ Færdiggør sæt";
-          } else if (info.offset.x < -50) {
-            element.style.backgroundColor = "#dc2626";
-            element.dataset.swipeText = "❌ Slet sæt";
-          } else {
-            element.style.backgroundColor = "";
-            element.dataset.swipeText = "";
-          }
-        }}
-        onDragEnd={(event, info) => {
-          if (info.offset.x > 80) {
-            setConfirmingSet(item.id);
-          } else if (info.offset.x < -80) {
-            setConfirmingDelete(item.id);
-          }
-        }}
-      >
+      key={item.id}
+      data-id={item.id} // <-- Tilføjet så vi kan finde rækken senere
+      className="border-b border-gray-700 transition"
+      initial={{ x: 0 }}
+      animate={{ x: confirmingSet === item.id || confirmingDelete === item.id ? 0 : undefined }}
+      exit={{ x: 0 }}
+      drag="x"
+      dragConstraints={{ left: -100, right: 100 }}
+      dragElastic={0.3}
+      onDrag={(event, info) => {
+        const element = event.target.closest("tr");
+        if (info.offset.x > 50) {
+          element.style.backgroundColor = "#16a34a";
+          element.dataset.swipeText = "✅ Færdiggør sæt";
+        } else if (info.offset.x < -50) {
+          element.style.backgroundColor = "#dc2626";
+          element.dataset.swipeText = "❌ Slet sæt";
+        } else {
+          element.style.backgroundColor = "";
+          element.dataset.swipeText = "";
+        }
+      }}
+      onDragEnd={(event, info) => {
+        if (info.offset.x > 80) {
+          setConfirmingSet(item.id);
+        } else if (info.offset.x < -80) {
+          setConfirmingDelete(item.id);
+        } else {
+          event.target.style.transform = "translateX(0px)";
+        }
+      }}
+    >
+
         <td className="py-3 px-4 text-center">{item.set}</td>
         <td className="py-3 px-4 text-center">{item.reps}</td>
         <td className="py-3 px-4 text-center">{item.weight}</td>
@@ -378,11 +382,21 @@ const fallbackCopyTextToClipboard = (text) => {
               Bekræft
             </button>
             <button 
-              onClick={() => setConfirmingSet(null)}
-              className="ml-2 px-4 py-2 bg-gray-700 text-white rounded-lg"
-            >
-              Annuller
-            </button>
+            onClick={() => {
+              setConfirmingSet(null);
+              setConfirmingDelete(null);
+
+              // Find den tilsvarende række og reset positionen
+              const element = document.querySelector(`[data-id='${item.id}']`);
+              if (element) {
+                element.style.transform = "translateX(0px)";
+              }
+            }}
+            className="ml-2 px-4 py-2 bg-gray-700 text-white rounded-lg"
+          >
+            Annuller
+          </button>
+
           </td>
         </tr>
       )}
