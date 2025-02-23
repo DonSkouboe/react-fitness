@@ -305,10 +305,13 @@ const fallbackCopyTextToClipboard = (text) => {
               href={`https://www.youtube.com/results?search_query=how+to+${encodeURIComponent(exercise)}`}
               target="_blank"
               rel="noopener noreferrer"
-              className="text-red-500 hover:text-red-700 transition"
+              className="text-red-500 hover:text-red-700 transition flex items-center"
             >
-              🎥
-            </a>
+              <svg className="w-6 h-6 fill-current text-red-600 hover:text-red-700 transition" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512">
+              <path d="M549.7 124.1c-6.3-23.5-24.8-42-48.3-48.3C457.6 64 288 64 288 64s-169.6 0-213.4 11.8c-23.5 6.3-42 24.8-48.3 48.3C16 167.9 16 256 16 256s0 88.1 10.3 131.9c6.3 23.5 24.8 42 48.3 48.3C118.4 448 288 448 288 448s169.6 0 213.4-11.8c23.5-6.3 42-24.8 48.3-48.3C560 344.1 560 256 560 256s0-88.1-10.3-131.9zM232 336V176l144 80-144 80z"/>
+            </svg>
+            <span className="hidden sm:inline ml-1">Instruks</span>
+          </a>
           </h3>
 
           <table className="w-full mt-2 bg-gray-900 text-white rounded-lg shadow-lg">
