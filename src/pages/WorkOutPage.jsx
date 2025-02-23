@@ -142,7 +142,7 @@ export default function WorkoutPage({
                         setTempValue(item.weight);
                       }}
                     >
-                      {item.weight} kg
+                       {typeof item.weight === "string" && item.weight.includes("kg") ? item.weight : `${item.weight} kg`}
                     </span>
                   )}
                 </motion.div>
