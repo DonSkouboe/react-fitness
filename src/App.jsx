@@ -70,6 +70,9 @@ export default function App() {
       setWorkout(workout.filter((set) => set.id !== setId));
     }
   };
+  const removeSet = (setId) => {
+    setWorkout((prevWorkout) => prevWorkout.filter((set) => set.id !== setId));
+  };
 
   const totalVolume = [...workout, ...completedSets].reduce((sum, set) => sum + (set.reps * (set.weight || 0)), 0);
 
@@ -353,11 +356,11 @@ const fallbackCopyTextToClipboard = (text) => {
       }}
       onDragEnd={(event, info) => {
         if (info.offset.x > 80) {
-          setConfirmingSet(item.id);
+          setConfirmingSet(item.id); // Bekræft færdiggørelse
         } else if (info.offset.x < -80) {
-          setConfirmingDelete(item.id);
+          setConfirmingDelete(item.id); // Bekræft sletning
         } else {
-          event.target.style.transform = "translateX(0px)";
+          event.target.style.transform = "translateX(0px)"; // Returner til midten
         }
       }}
     >
@@ -401,28 +404,34 @@ const fallbackCopyTextToClipboard = (text) => {
         </tr>
       )}
 
-      {confirmingDelete === item.id && (
-        <tr className="bg-red-500 text-white">
-          <td colSpan="3" className="py-2 px-4 text-center">
-            ❌ Vil du slette dette sæt?
-            <button 
-              onClick={() => {
-                removeSet(item.id);
-                setConfirmingDelete(null);
-              }}
-              className="ml-4 px-4 py-2 bg-white text-red-700 rounded-lg"
-            >
-              Bekræft
-            </button>
-            <button 
-              onClick={() => setConfirmingDelete(null)}
-              className="ml-2 px-4 py-2 bg-gray-700 text-white rounded-lg"
-            >
-              Annuller
-            </button>
-          </td>
-        </tr>
-      )}
+{confirmingDelete === item.id && (
+  <tr className="bg-red-500 text-white">
+    <td colSpan="3" className="py-2 px-4 text-center">
+      ❌ Vil du slette dette sæt?
+      <button 
+        onClick={() => {
+          removeSet(item.id);
+          setConfirmingDelete(null);
+        }}
+        className="ml-4 px-4 py-2 bg-white text-red-700 rounded-lg"
+      >
+        Bekræft
+      </button>
+      <button 
+        onClick={() => {
+          setConfirmingDelete(null);
+          const element = document.querySelector(`[data-id='${item.id}']`);
+          if (element) {
+            element.style.transform = "translateX(0px)";
+          }
+        }}
+        className="ml-2 px-4 py-2 bg-gray-700 text-white rounded-lg"
+      >
+        Annuller
+      </button>
+    </td>
+  </tr>
+)}
     </>
   ))}
 </tbody>
