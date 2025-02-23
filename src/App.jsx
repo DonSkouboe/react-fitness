@@ -1,4 +1,6 @@
 import { useState } from "react";
+import { motion } from "framer-motion";
+
 import exerciseData from "./exercises.json"; // Importer vores lokale dataset
 
 export default function App() {
@@ -323,43 +325,58 @@ const fallbackCopyTextToClipboard = (text) => {
               </tr>
             </thead>
             <tbody>
-              {sets.map((item) => (
-                <tr
-                  key={item.id}
-                  className="border-b border-gray-700 hover:bg-gray-700 transition"
-                  onTouchStart={(e) => e.currentTarget.dataset.startX = e.touches[0].clientX}
-                  onTouchEnd={(e) => {
-                    const diff = e.changedTouches[0].clientX - e.currentTarget.dataset.startX;
-                    if (diff > 50) {
-                      e.currentTarget.classList.add("bg-green-600");
-                      setTimeout(() => completeSet(item.id), 300);
-                    }
-                    if (diff < -50) {
-                      e.currentTarget.classList.add("bg-red-600");
-                      setTimeout(() => removeSet(item.id), 300);
-                    }
-                  }}
-                >
-                  <td className="py-2 px-3 text-center">{item.set}</td>
-                  <td className="py-2 px-3 text-center">
-                    <input
-                      type="number"
-                      className="w-16 p-1 bg-gray-700 text-white text-center rounded-md border border-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-400"
-                      value={item.reps > 0 ? item.reps : ""}
-                      onChange={(e) => updateSet(item.id, "reps", e.target.value)}
-                    />
-                  </td>
-                  <td className="py-2 px-3 text-center">
-                    <input
-                      type="number"
-                      className="w-16 p-1 bg-gray-700 text-white text-center rounded-md border border-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-400"
-                      value={item.weight > 0 ? item.weight : ""}
-                      onChange={(e) => updateSet(item.id, "weight", e.target.value)}
-                    />
-                  </td>
-                </tr>
-              ))}
-            </tbody>
+  {workout.map((item) => (
+    <motion.tr
+      key={item.id}
+      className="border-b border-gray-700 transition"
+      initial={{ x: 0 }}
+      animate={{ x: 0 }}
+      exit={{ x: 0 }}
+      drag="x"
+      dragConstraints={{ left: -100, right: 100 }}
+      dragElastic={0.5}
+      onDragEnd={(event, info) => {
+        if (info.offset.x > 80) {
+          // Swipe højre = afslut sæt
+          setTimeout(() => completeSet(item.id), 200);
+        }
+        if (info.offset.x < -80) {
+          // Swipe venstre = slet sæt
+          setTimeout(() => removeSet(item.id), 200);
+        }
+      }}
+    >
+      <td className="py-3 px-4 flex items-center">
+        {item.exercise}
+        <a
+          href={`https://www.youtube.com/results?search_query=how+to+${encodeURIComponent(item.exercise)}`}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="ml-2 text-red-500 hover:text-red-700 transition"
+        >
+          🎥
+        </a>
+      </td>
+      <td className="py-3 px-4 text-center">{item.set}</td>
+      <td className="py-3 px-4 text-center">
+        <input
+          type="number"
+          className="w-16 p-1 bg-gray-700 text-white text-center rounded-md border border-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-400"
+          value={item.reps > 0 ? item.reps : ""}
+          onChange={(e) => updateSet(item.id, "reps", e.target.value)}
+        />
+      </td>
+      <td className="py-3 px-4 text-center">
+        <input
+          type="number"
+          className="w-16 p-1 bg-gray-700 text-white text-center rounded-md border border-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-400"
+          value={item.weight > 0 ? item.weight : ""}
+          onChange={(e) => updateSet(item.id, "weight", e.target.value)}
+        />
+      </td>
+    </motion.tr>
+  ))}
+</tbody>
           </table>
         </div>
       ))}
