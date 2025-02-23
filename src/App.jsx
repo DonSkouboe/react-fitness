@@ -424,31 +424,56 @@ const fallbackCopyTextToClipboard = (text) => {
           </motion.div>
         ))}
 
-        {/* BEKRÆFT FÆRDIGGØRELSE */}
-        {confirmingSet === sets[0]?.id && (
-          <div className="bg-green-500 text-white text-center mt-2 p-2 rounded-lg">
-            ✅ Vil du færdiggøre denne øvelse?
-            <button onClick={() => { completeSet(sets[0].id); setConfirmingSet(null); }} className="ml-4 px-4 py-2 bg-white text-green-700 rounded-lg">
-              Bekræft
-            </button>
-            <button onClick={() => { setConfirmingSet(null); }} className="ml-2 px-4 py-2 bg-gray-700 text-white rounded-lg">
-              Annuller
-            </button>
-          </div>
-        )}
+{/* BEKRÆFT FÆRDIGGØRELSE */}
+{confirmingSet === sets[0]?.id && (
+  <div className="bg-green-500 text-white text-center mt-2 p-2 rounded-lg">
+    ✅ Vil du færdiggøre denne øvelse?
+    <button
+      onClick={() => {
+        completeSet(sets[0].id);
+        setConfirmingSet(null);
+      }}
+      className="ml-4 px-4 py-2 bg-white text-green-700 rounded-lg"
+    >
+      Bekræft
+    </button>
+    <button
+      onClick={(e) => {
+        setConfirmingSet(null);
+        e.target.closest(".relative").style.backgroundColor = ""; // Nulstil farve
+      }}
+      className="ml-2 px-4 py-2 bg-gray-700 text-white rounded-lg"
+    >
+      Annuller
+    </button>
+  </div>
+)}
 
-        {/* BEKRÆFT SLETNING */}
-        {confirmingDelete === sets[0]?.id && (
-          <div className="bg-red-500 text-white text-center mt-2 p-2 rounded-lg">
-            ❌ Vil du slette denne øvelse?
-            <button onClick={() => { removeSet(sets[0].id); setConfirmingDelete(null); }} className="ml-4 px-4 py-2 bg-white text-red-700 rounded-lg">
-              Bekræft
-            </button>
-            <button onClick={() => { setConfirmingDelete(null); }} className="ml-2 px-4 py-2 bg-gray-700 text-white rounded-lg">
-              Annuller
-            </button>
-          </div>
-        )}
+{/* BEKRÆFT SLETNING */}
+{confirmingDelete === sets[0]?.id && (
+  <div className="bg-red-500 text-white text-center mt-2 p-2 rounded-lg">
+    ❌ Vil du slette denne øvelse?
+    <button
+      onClick={() => {
+        removeSet(sets[0].id);
+        setConfirmingDelete(null);
+      }}
+      className="ml-4 px-4 py-2 bg-white text-red-700 rounded-lg"
+    >
+      Bekræft
+    </button>
+    <button
+      onClick={(e) => {
+        setConfirmingDelete(null);
+        e.target.closest(".relative").style.backgroundColor = ""; // Nulstil farve
+      }}
+      className="ml-2 px-4 py-2 bg-gray-700 text-white rounded-lg"
+    >
+      Annuller
+    </button>
+  </div>
+)}
+
       </div>
     ))}
   </div>
