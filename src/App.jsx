@@ -1,5 +1,7 @@
 import { useState } from "react";
 import { motion } from "motion/react";
+import Profile from "./components/profile";
+import BottomNav from "./components/BottomNav";
 import exerciseData from "./exercises.json"; // Importer vores lokale dataset
 
 export default function App() {
@@ -247,7 +249,7 @@ const fallbackCopyTextToClipboard = (text) => {
 
   
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center bg-gray-900 text-white p-6">
+    <div className="min-h-screen flex flex-col bg-gray-900 text-white p-6 pb-16">
       <h1 className="text-4xl font-bold text-blue-400 mb-6">🏋️ Fit-with-ChatGPT 🚀</h1>
 
       {/* INPUT-FELT */}
@@ -550,7 +552,8 @@ const fallbackCopyTextToClipboard = (text) => {
     </h3>
   </div>
 )}
-
+<BottomNav />
     </div>
+    
   );
 }
