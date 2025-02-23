@@ -372,22 +372,16 @@ const fallbackCopyTextToClipboard = (text) => {
     }
   }}
   onDragEnd={(event, info) => {
-    const element = event.target.closest(".relative");
-
     if (info.offset.x > 80) {
       setConfirmingSet(item.id);
     } else if (info.offset.x < -80) {
       setConfirmingDelete(item.id);
     } else {
-      // **🔹 Glid smooth tilbage til midten, hvis swipe er for kort**
-      element.style.transition = "transform 0.3s ease-out, background-color 0.3s ease-out";
-      element.style.transform = "translateX(0px)";
-      element.style.backgroundColor = "#1f2937";
-      element.dataset.swipeText = "";
-
-      // **🔹 Brug Framer Motion's animation for at sikre en smooth reset**
+      // **🔹 Bruger Framer Motion's `animate` til at glatte reset**
+      event.target.style.transition = "transform 0.3s ease-out, background-color 0.3s ease-out";
+      event.target.style.transform = "translateX(0px)";
       setTimeout(() => {
-        element.style.transition = "";
+        event.target.style.transition = "";
       }, 300);
     }
   }}
