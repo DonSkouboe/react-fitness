@@ -8,6 +8,9 @@ export default function App() {
   const [input, setInput] = useState("");
   const [confirmingSet, setConfirmingSet] = useState(null);
   const [confirmingDelete, setConfirmingDelete] = useState(null);
+  const [editingSet, setEditingSet] = useState(null); // Holder styr på hvilket felt der redigeres
+  const [tempValue, setTempValue] = useState(""); // Midlertidig værdi
+
 
   const processWorkout = () => {
     if (!input.trim()) {
@@ -72,6 +75,16 @@ export default function App() {
   };
   const removeSet = (setId) => {
     setWorkout((prevWorkout) => prevWorkout.filter((set) => set.id !== setId));
+  };
+  const handleEdit = (setId, field, value) => {
+    setWorkout((prevWorkout) =>
+      prevWorkout.map((set) =>
+        set.id === setId
+          ? { ...set, [field]: parseInt(value) || 0 }
+          : set
+      )
+    );
+    setEditingSet(null); // Luk inputfeltet
   };
 
   const totalVolume = [...workout, ...completedSets].reduce((sum, set) => sum + (set.reps * (set.weight || 0)), 0);
@@ -366,8 +379,60 @@ const fallbackCopyTextToClipboard = (text) => {
     >
 
         <td className="py-3 px-4 text-center">{item.set}</td>
-        <td className="py-3 px-4 text-center">{item.reps}</td>
-        <td className="py-3 px-4 text-center">{item.weight}</td>
+        <td className="py-3 px-4 text-center">
+  {editingSet === `${item.id}-reps` ? (
+    <motion.input
+      initial={{ scale: 0.8, opacity: 0 }}
+      animate={{ scale: 1, opacity: 1 }}
+      exit={{ scale: 0.8, opacity: 0 }}
+      type="number"
+      className="w-16 p-1 bg-gray-700 text-white text-center rounded-md border border-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-400"
+      value={tempValue}
+      autoFocus
+      onChange={(e) => setTempValue(e.target.value)}
+      onBlur={() => handleEdit(item.id, "reps", tempValue)}
+      onKeyDown={(e) => e.key === "Enter" && handleEdit(item.id, "reps", tempValue)}
+    />
+  ) : (
+    <span
+      onClick={() => {
+        setEditingSet(`${item.id}-reps`);
+        setTempValue(item.reps);
+      }}
+      className="cursor-pointer hover:text-blue-400 transition"
+    >
+      {item.reps}
+    </span>
+  )}
+</td>
+
+<td className="py-3 px-4 text-center">
+  {editingSet === `${item.id}-weight` ? (
+    <motion.input
+      initial={{ scale: 0.8, opacity: 0 }}
+      animate={{ scale: 1, opacity: 1 }}
+      exit={{ scale: 0.8, opacity: 0 }}
+      type="number"
+      className="w-16 p-1 bg-gray-700 text-white text-center rounded-md border border-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-400"
+      value={tempValue}
+      autoFocus
+      onChange={(e) => setTempValue(e.target.value)}
+      onBlur={() => handleEdit(item.id, "weight", tempValue)}
+      onKeyDown={(e) => e.key === "Enter" && handleEdit(item.id, "weight", tempValue)}
+    />
+  ) : (
+    <span
+      onClick={() => {
+        setEditingSet(`${item.id}-weight`);
+        setTempValue(item.weight);
+      }}
+      className="cursor-pointer hover:text-blue-400 transition"
+    >
+      {item.weight} kg
+    </span>
+  )}
+</td>
+
       </motion.tr>
 
       {/* BEKRÆFTELSESRÆKKER */}
@@ -404,34 +469,34 @@ const fallbackCopyTextToClipboard = (text) => {
         </tr>
       )}
 
-{confirmingDelete === item.id && (
-  <tr className="bg-red-500 text-white">
-    <td colSpan="3" className="py-2 px-4 text-center">
-      ❌ Vil du slette dette sæt?
-      <button 
-        onClick={() => {
-          removeSet(item.id);
-          setConfirmingDelete(null);
-        }}
-        className="ml-4 px-4 py-2 bg-white text-red-700 rounded-lg"
-      >
-        Bekræft
-      </button>
-      <button 
-        onClick={() => {
-          setConfirmingDelete(null);
-          const element = document.querySelector(`[data-id='${item.id}']`);
-          if (element) {
-            element.style.transform = "translateX(0px)";
-          }
-        }}
-        className="ml-2 px-4 py-2 bg-gray-700 text-white rounded-lg"
-      >
-        Annuller
-      </button>
-    </td>
-  </tr>
-)}
+      {confirmingDelete === item.id && (
+        <tr className="bg-red-500 text-white">
+          <td colSpan="3" className="py-2 px-4 text-center">
+            ❌ Vil du slette dette sæt?
+            <button 
+              onClick={() => {
+                removeSet(item.id);
+                setConfirmingDelete(null);
+              }}
+              className="ml-4 px-4 py-2 bg-white text-red-700 rounded-lg"
+            >
+              Bekræft
+            </button>
+            <button 
+              onClick={() => {
+                setConfirmingDelete(null);
+                const element = document.querySelector(`[data-id='${item.id}']`);
+                if (element) {
+                  element.style.transform = "translateX(0px)";
+                }
+              }}
+              className="ml-2 px-4 py-2 bg-gray-700 text-white rounded-lg"
+            >
+              Annuller
+            </button>
+          </td>
+        </tr>
+      )}
     </>
   ))}
 </tbody>
