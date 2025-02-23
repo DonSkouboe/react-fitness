@@ -305,8 +305,7 @@ const fallbackCopyTextToClipboard = (text) => {
         📋 Formatér Træning
       </button>
 
- {/* TABELLEN - VISER AKTIVE SÆT */}
- {/* OPTIMERET UI FOR AKTIVE SÆT */}
+{/* OPTIMERET UI FOR AKTIVE SÆT */}
 {workout.length > 0 && (
   <div className="w-full max-w-3xl mt-6">
     <h2 className="text-2xl font-bold text-blue-400 mb-4">🏋️ Aktiv Træning</h2>
@@ -333,7 +332,14 @@ const fallbackCopyTextToClipboard = (text) => {
           </a>
         </h3>
 
-        {/* INDIVIDUELT SÆT MED SWIPE */}
+        {/* OVERSKRIFTER TIL SÆTTENE */}
+        <div className="grid grid-cols-3 text-gray-400 text-sm mt-2 pb-1 border-b border-gray-600">
+          <span className="text-center">Sæt</span>
+          <span className="text-center">Reps</span>
+          <span className="text-center">Vægt</span>
+        </div>
+
+        {/* INDIVIDUELLE SÆT MED SWIPE */}
         {sets.map((item) => (
           <motion.div
             key={item.id}
@@ -370,27 +376,51 @@ const fallbackCopyTextToClipboard = (text) => {
             {/* SÆT-INFO */}
             <span className="text-center w-12">{item.set}</span>
             
-            {/* REPS */}
-            <span 
-              className="text-center cursor-pointer hover:text-blue-400 transition"
-              onClick={() => {
-                setEditingSet(`${item.id}-reps`);
-                setTempValue(item.reps);
-              }}
-            >
-              {item.reps}
-            </span>
+            {/* REPS (Redigerbar) */}
+            {editingSet === `${item.id}-reps` ? (
+              <input
+                type="number"
+                className="w-16 bg-gray-700 text-white text-center rounded-md border border-gray-500 focus:ring-2 focus:ring-blue-400"
+                value={tempValue}
+                autoFocus
+                onChange={(e) => setTempValue(e.target.value)}
+                onBlur={() => handleEdit(item.id, "reps", tempValue)}
+                onKeyDown={(e) => e.key === "Enter" && handleEdit(item.id, "reps", tempValue)}
+              />
+            ) : (
+              <span 
+                className="text-center cursor-pointer hover:text-blue-400 transition"
+                onClick={() => {
+                  setEditingSet(`${item.id}-reps`);
+                  setTempValue(item.reps);
+                }}
+              >
+                {item.reps}
+              </span>
+            )}
 
-            {/* VÆGT */}
-            <span 
-              className="text-center cursor-pointer hover:text-blue-400 transition"
-              onClick={() => {
-                setEditingSet(`${item.id}-weight`);
-                setTempValue(item.weight);
-              }}
-            >
-              {typeof item.weight === "string" && item.weight.includes("kg") ? item.weight : `${item.weight} kg`}
-            </span>
+            {/* VÆGT (Redigerbar) */}
+            {editingSet === `${item.id}-weight` ? (
+              <input
+                type="number"
+                className="w-16 bg-gray-700 text-white text-center rounded-md border border-gray-500 focus:ring-2 focus:ring-blue-400"
+                value={tempValue}
+                autoFocus
+                onChange={(e) => setTempValue(e.target.value)}
+                onBlur={() => handleEdit(item.id, "weight", tempValue)}
+                onKeyDown={(e) => e.key === "Enter" && handleEdit(item.id, "weight", tempValue)}
+              />
+            ) : (
+              <span 
+                className="text-center cursor-pointer hover:text-blue-400 transition"
+                onClick={() => {
+                  setEditingSet(`${item.id}-weight`);
+                  setTempValue(item.weight);
+                }}
+              >
+                {typeof item.weight === "string" && item.weight.includes("kg") ? item.weight : `${item.weight} kg`}
+              </span>
+            )}
           </motion.div>
         ))}
 
@@ -398,19 +428,10 @@ const fallbackCopyTextToClipboard = (text) => {
         {confirmingSet === sets[0]?.id && (
           <div className="bg-green-500 text-white text-center mt-2 p-2 rounded-lg">
             ✅ Vil du færdiggøre denne øvelse?
-            <button
-              onClick={() => {
-                completeSet(sets[0].id);
-                setConfirmingSet(null);
-              }}
-              className="ml-4 px-4 py-2 bg-white text-green-700 rounded-lg"
-            >
+            <button onClick={() => { completeSet(sets[0].id); setConfirmingSet(null); }} className="ml-4 px-4 py-2 bg-white text-green-700 rounded-lg">
               Bekræft
             </button>
-            <button
-              onClick={() => setConfirmingSet(null)}
-              className="ml-2 px-4 py-2 bg-gray-700 text-white rounded-lg"
-            >
+            <button onClick={() => { setConfirmingSet(null); }} className="ml-2 px-4 py-2 bg-gray-700 text-white rounded-lg">
               Annuller
             </button>
           </div>
@@ -420,19 +441,10 @@ const fallbackCopyTextToClipboard = (text) => {
         {confirmingDelete === sets[0]?.id && (
           <div className="bg-red-500 text-white text-center mt-2 p-2 rounded-lg">
             ❌ Vil du slette denne øvelse?
-            <button
-              onClick={() => {
-                removeSet(sets[0].id);
-                setConfirmingDelete(null);
-              }}
-              className="ml-4 px-4 py-2 bg-white text-red-700 rounded-lg"
-            >
+            <button onClick={() => { removeSet(sets[0].id); setConfirmingDelete(null); }} className="ml-4 px-4 py-2 bg-white text-red-700 rounded-lg">
               Bekræft
             </button>
-            <button
-              onClick={() => setConfirmingDelete(null)}
-              className="ml-2 px-4 py-2 bg-gray-700 text-white rounded-lg"
-            >
+            <button onClick={() => { setConfirmingDelete(null); }} className="ml-2 px-4 py-2 bg-gray-700 text-white rounded-lg">
               Annuller
             </button>
           </div>
@@ -441,6 +453,7 @@ const fallbackCopyTextToClipboard = (text) => {
     ))}
   </div>
 )}
+
 
 
  
