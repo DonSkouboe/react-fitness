@@ -1,8 +1,8 @@
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import { useState } from "react";
 import Layout from "./pages/Layout";
-import Profile from "./pages/Profile";
-import WorkoutPage from "./pages/WorkoutPage";
+import Profile from "./pages/Profile.jsx";
+import WorkoutPage from "./pages/WorkOutPage.jsx";
 import HomePage from "./pages/HomePage";
 
 export default function App() {
