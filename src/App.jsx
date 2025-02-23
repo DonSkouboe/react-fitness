@@ -379,11 +379,16 @@ const fallbackCopyTextToClipboard = (text) => {
     } else if (info.offset.x < -80) {
       setConfirmingDelete(item.id);
     } else {
-      // **🔹 Glider smooth tilbage og resetter farve**
+      // **🔹 Glid smooth tilbage til midten, hvis swipe er for kort**
       element.style.transition = "transform 0.3s ease-out, background-color 0.3s ease-out";
       element.style.transform = "translateX(0px)";
-      element.style.backgroundColor = "#1f2937"; 
+      element.style.backgroundColor = "#1f2937";
       element.dataset.swipeText = "";
+
+      // **🔹 Brug Framer Motion's animation for at sikre en smooth reset**
+      setTimeout(() => {
+        element.style.transition = "";
+      }, 300);
     }
   }}
 >
