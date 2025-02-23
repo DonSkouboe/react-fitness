@@ -226,9 +226,9 @@ export default function WorkoutPage({
               ))}
             </tbody>
           </table>
-          <td className="py-3 px-4 text-center">
-  {set.volume !== undefined && !isNaN(set.volume) ? `${set.volume} kg` : "-"}
-</td>
+          <h3 className="text-xl font-bold text-green-400 mt-4">
+  🔥 Samlet Volume: {completedSets.reduce((sum, set) => sum + (isNaN(set.volume) ? 0 : set.volume), 0)} kg
+</h3>
 
         </div>
       )}
