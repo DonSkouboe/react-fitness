@@ -305,38 +305,42 @@ const fallbackCopyTextToClipboard = (text) => {
     <tr
       key={item.id}
       className="relative border-b border-gray-700 bg-gray-800 transition-transform duration-300 ease-in-out"
-      onTouchStart={(e) => e.currentTarget.dataset.startX = e.touches[0].clientX}
+      onTouchStart={(e) => {
+        e.currentTarget.dataset.startX = e.touches[0].clientX;
+        e.currentTarget.dataset.swipeAction = "";
+      }}
       onTouchMove={(e) => {
         const diff = e.touches[0].clientX - e.currentTarget.dataset.startX;
+        e.currentTarget.style.transform = `translateX(${diff}px)`;
+
+        // Vis farveændring ved swipe-retning
         if (diff > 50) {
-          e.currentTarget.style.transform = `translateX(${Math.min(diff, 100)}px)`;
-        }
-        if (diff < -50) {
-          e.currentTarget.style.transform = `translateX(${Math.max(diff, -100)}px)`;
+          e.currentTarget.style.backgroundColor = "#16A34A"; // Grøn (Afslut)
+          e.currentTarget.dataset.swipeAction = "complete";
+        } else if (diff < -50) {
+          e.currentTarget.style.backgroundColor = "#DC2626"; // Rød (Slet)
+          e.currentTarget.dataset.swipeAction = "delete";
+        } else {
+          e.currentTarget.style.backgroundColor = "#1E293B"; // Neutral baggrund
+          e.currentTarget.dataset.swipeAction = "";
         }
       }}
       onTouchEnd={(e) => {
         const diff = e.changedTouches[0].clientX - e.currentTarget.dataset.startX;
-        if (diff > 75) {
-          if (window.confirm("✅ Vil du afslutte dette sæt?")) {
-            completeSet(item.id);
-          }
-        } else if (diff < -75) {
-          if (window.confirm("❌ Vil du slette dette sæt?")) {
-            removeSet(item.id);
-          }
+        const action = e.currentTarget.dataset.swipeAction;
+
+        if (diff > 100 && action === "complete") {
+          completeSet(item.id);
+        } else if (diff < -100 && action === "delete") {
+          removeSet(item.id);
         }
+
         e.currentTarget.style.transform = "translateX(0px)"; // Reset position
+        e.currentTarget.style.backgroundColor = "#1E293B"; // Neutral farve reset
       }}
     >
-      {/* Baggrund for swipe (vises bagved) */}
-      <td colSpan="4" className="absolute inset-0 flex items-center justify-between px-4 opacity-70">
-        <span className="text-green-500 font-bold text-lg">✅ Afslut</span>
-        <span className="text-red-500 font-bold text-lg">❌ Slet</span>
-      </td>
-
-      {/* Forgrundsindhold (hovedtabel) */}
-      <td className="relative py-3 px-4 flex items-center bg-gray-800">
+      {/* Tabelindhold */}
+      <td className="relative py-3 px-4 flex items-center">
         {item.exercise}
         <a
           href={`https://www.youtube.com/results?search_query=how+to+${encodeURIComponent(item.exercise)}`}
@@ -347,8 +351,8 @@ const fallbackCopyTextToClipboard = (text) => {
           🎥
         </a>
       </td>
-      <td className="relative py-3 px-4 text-center bg-gray-800">{item.set}</td>
-      <td className="relative py-3 px-4 text-center bg-gray-800">
+      <td className="relative py-3 px-4 text-center">{item.set}</td>
+      <td className="relative py-3 px-4 text-center">
         <input
           type="number"
           className="w-16 p-1 bg-gray-700 text-white text-center rounded-md border border-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-400"
@@ -356,7 +360,7 @@ const fallbackCopyTextToClipboard = (text) => {
           onChange={(e) => updateSet(item.id, "reps", e.target.value)}
         />
       </td>
-      <td className="relative py-3 px-4 text-center bg-gray-800">
+      <td className="relative py-3 px-4 text-center">
         <input
           type="number"
           className="w-16 p-1 bg-gray-700 text-white text-center rounded-md border border-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-400"
@@ -367,6 +371,7 @@ const fallbackCopyTextToClipboard = (text) => {
     </tr>
   ))}
 </tbody>
+
 
 
       </table>
