@@ -374,11 +374,13 @@ const fallbackCopyTextToClipboard = (text) => {
   onDragEnd={(event, info) => {
     if (info.offset.x > 80) {
       setConfirmingSet(item.id);
+      setConfirmingDelete(null); // Sikrer, at kun én bekræftelse vises
     } else if (info.offset.x < -80) {
       setConfirmingDelete(item.id);
+      setConfirmingSet(null); // Sikrer, at kun én bekræftelse vises
     } else {
-      // **🔹 Bruger Framer Motion's `animate` til at glatte reset**
-      event.target.style.transition = "transform 0.3s ease-out, background-color 0.3s ease-out";
+      // 🔥 **RESET SWIPE, hvis brugeren ikke swiper langt nok!**
+      event.target.style.transition = "transform 0.3s ease-out";
       event.target.style.transform = "translateX(0px)";
       setTimeout(() => {
         event.target.style.transition = "";
@@ -386,6 +388,7 @@ const fallbackCopyTextToClipboard = (text) => {
     }
   }}
 >
+
 
      
             {/* SÆT-INFO */}
