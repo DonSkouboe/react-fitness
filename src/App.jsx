@@ -1,6 +1,5 @@
 import { useState } from "react";
-import { motion } from "framer-motion";
-
+import { motion } from "motion/react";
 import exerciseData from "./exercises.json"; // Importer vores lokale dataset
 
 export default function App() {
@@ -327,51 +326,93 @@ const fallbackCopyTextToClipboard = (text) => {
               </tr>
             </thead>
             <tbody>
-              {sets.map((item) => (
-                <motion.tr
-                  key={item.id}
-                  className="border-b border-gray-700 transition"
-                  initial={{ x: 0 }}
-                  animate={{ x: 0 }}
-                  exit={{ x: 0 }}
-                  drag="x"
-                  dragConstraints={{ left: -100, right: 100 }}
-                  dragElastic={0.3}
-                  onDrag={(event, info) => {
-                    const element = event.target.closest("tr");
-                    if (info.offset.x > 50) {
-                      element.style.backgroundColor = "#16a34a";
-                      element.dataset.swipeText = "✅ Færdiggør sæt";
-                    } else if (info.offset.x < -50) {
-                      element.style.backgroundColor = "#dc2626";
-                      element.dataset.swipeText = "❌ Slet sæt";
-                    } else {
-                      element.style.backgroundColor = "";
-                      element.dataset.swipeText = "";
-                    }
-                  }}
-                  onDragEnd={(event, info) => {
-                    const element = event.target.closest("tr");
-                    if (info.offset.x > 80) {
-                      setConfirmingSet(item.id);
-                      element.style.backgroundColor = "#16a34a";
-                      element.dataset.swipeText = "✅ Færdiggør sæt";
-                    } else if (info.offset.x < -80) {
-                      setConfirmingDelete(item.id);
-                      element.style.backgroundColor = "#dc2626";
-                      element.dataset.swipeText = "❌ Slet sæt";
-                    } else {
-                      element.style.backgroundColor = "";
-                      element.dataset.swipeText = "";
-                    }
-                  }}
-                >
-                  <td className="py-3 px-4 text-center">{item.set}</td>
-                  <td className="py-3 px-4 text-center">{item.reps}</td>
-                  <td className="py-3 px-4 text-center">{item.weight}</td>
-                </motion.tr>
-              ))}
-            </tbody>
+  {sets.map((item) => (
+    <>
+      <motion.tr
+        key={item.id}
+        className="border-b border-gray-700 transition"
+        initial={{ x: 0 }}
+        animate={{ x: 0 }}
+        exit={{ x: 0 }}
+        drag="x"
+        dragConstraints={{ left: -100, right: 100 }}
+        dragElastic={0.3}
+        onDrag={(event, info) => {
+          const element = event.target.closest("tr");
+          if (info.offset.x > 50) {
+            element.style.backgroundColor = "#16a34a";
+            element.dataset.swipeText = "✅ Færdiggør sæt";
+          } else if (info.offset.x < -50) {
+            element.style.backgroundColor = "#dc2626";
+            element.dataset.swipeText = "❌ Slet sæt";
+          } else {
+            element.style.backgroundColor = "";
+            element.dataset.swipeText = "";
+          }
+        }}
+        onDragEnd={(event, info) => {
+          if (info.offset.x > 80) {
+            setConfirmingSet(item.id);
+          } else if (info.offset.x < -80) {
+            setConfirmingDelete(item.id);
+          }
+        }}
+      >
+        <td className="py-3 px-4 text-center">{item.set}</td>
+        <td className="py-3 px-4 text-center">{item.reps}</td>
+        <td className="py-3 px-4 text-center">{item.weight}</td>
+      </motion.tr>
+
+      {/* BEKRÆFTELSESRÆKKER */}
+      {confirmingSet === item.id && (
+        <tr className="bg-green-500 text-white">
+          <td colSpan="3" className="py-2 px-4 text-center">
+            ✅ Vil du færdiggøre dette sæt?
+            <button 
+              onClick={() => {
+                completeSet(item.id);
+                setConfirmingSet(null);
+              }}
+              className="ml-4 px-4 py-2 bg-white text-green-700 rounded-lg"
+            >
+              Bekræft
+            </button>
+            <button 
+              onClick={() => setConfirmingSet(null)}
+              className="ml-2 px-4 py-2 bg-gray-700 text-white rounded-lg"
+            >
+              Annuller
+            </button>
+          </td>
+        </tr>
+      )}
+
+      {confirmingDelete === item.id && (
+        <tr className="bg-red-500 text-white">
+          <td colSpan="3" className="py-2 px-4 text-center">
+            ❌ Vil du slette dette sæt?
+            <button 
+              onClick={() => {
+                removeSet(item.id);
+                setConfirmingDelete(null);
+              }}
+              className="ml-4 px-4 py-2 bg-white text-red-700 rounded-lg"
+            >
+              Bekræft
+            </button>
+            <button 
+              onClick={() => setConfirmingDelete(null)}
+              className="ml-2 px-4 py-2 bg-gray-700 text-white rounded-lg"
+            >
+              Annuller
+            </button>
+          </td>
+        </tr>
+      )}
+    </>
+  ))}
+</tbody>
+
           </table>
         </div>
       ))}
